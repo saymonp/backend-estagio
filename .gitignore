@@ -18,3 +18,11 @@ var/
 
 # Serverless directories
 .serverless
+
+node_modules/
+.serverless/
+.pytest_cache/
+.vscode/
+__pycache__/
+*.py[cod]
+.env
