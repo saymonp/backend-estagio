@@ -1,4 +1,3 @@
-
 class User(object):
 
     def __init__(self):
@@ -8,7 +7,7 @@ class User(object):
     def login(self):
         ...
     
-    def register(self):
+    def register(self, name: str, email: str, permissions: str = None):
         ...
 
     def email_confirmation(self):
@@ -20,5 +19,5 @@ class User(object):
     def add_permissions(self):
         ...
     
-    def remove_permissions(self):
+    def revoke_permissions(self):
         ...
