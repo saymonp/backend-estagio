@@ -1,6 +1,6 @@
 import pytest
 
-from mail.mail import Mail
+from backend.mail.mail import Mail
 
 
 def test_send_email():
