@@ -17,13 +17,14 @@ class User(object):
         ...
 
     def register(self, name: str, email: str, password: str, permissions: str = None):
+        print(name, email, password, permissions)
+        if not name or not email or not password:
+            raise Exception("Invalid data")
+
         email_service = Mail()
 
-        try:
-            # Checa se usuário já existe
-            check_user = db.users.find_one({"email": email})
-        except TypeError:
-            return {"msg": "Email not valid"}
+        # Checa se usuário já existe
+        check_user = db.users.find_one({"email": email})
 
         if check_user:
             if check_user["isVerified"] == True:
@@ -36,20 +37,17 @@ class User(object):
                 to = check_user["email"]
                 reply_to = "No reply"
                 subject = "Email de Verificação"
-                message = f"Link de confirmação http://localhost:4200/user/validation/{token}"
+                message = f"Novo link de confirmação http://localhost:4200/user/validation/{token}"
 
-                # email_service.send_email(to, reply_to, subject, message)
+                email_service.send_email(to, reply_to, subject, message)
 
                 return {"msg": "User already exists, new email verification sent"}
-
-        salt = bcrypt.gensalt()
-        hashed = bcrypt.hashpw(password.encode('utf8'), salt)
 
         try:
             inserted_user = db.users.insert_one({
                 "name": name,
                 "email": email,
-                "password": hashed,
+                "password": bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt()),
                 "permissions": permissions,
                 "isVerified": False,
             })
@@ -64,22 +62,23 @@ class User(object):
         except TypeError:
             return {"msg": "Invalid data"}
 
-        try:
-            # Envia email
-            to = email
-            reply_to = "No reply"
-            subject = "Email de Verificação"
-            message = f"Link de confirmação http://localhost:4200/user/validation/{token}"
+        # Envia email
+        to = email
+        reply_to = "No reply"
+        subject = "Email de Verificação"
+        message = f"Link de confirmação http://localhost:4200/user/validation/{token}"
 
-            # email_service.send_email(to, reply_to, subject, message)
+        email_service.send_email(to, reply_to, subject, message)
 
-            return {"msg": "verification email sent"}
-        except TypeError:
-            return {"msg": "Email failed"}
+        return {"msg": "Verification email sent"}
 
 
     def email_confirmation(self, confirmation_token):
         secret_token = db.secretToken.find_one({"token": confirmation_token})
+
+        if not secret_token:
+            raise Exception("No token validation found")
+
         user_id = secret_token["_userId"]
 
         db.users.find_one_and_update({"_id": user_id}, {"isVerified": True})
