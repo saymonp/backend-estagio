@@ -12,6 +12,7 @@ pytest = "*"
 [packages]
 pymongo = "*"
 dnspython = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.8"
