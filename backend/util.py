@@ -43,7 +43,7 @@ def parametrized(dec):
 @parametrized
 def auth(f, permission):
     def aux(*xs, **kws):
-        print(xs[0]["header"])
+        
         header = json.loads(xs[0]["header"])
         auth_token = header["authorization"]
 
@@ -60,7 +60,8 @@ def auth(f, permission):
             payload = jwt.decode(auth_token, JWT_SECRET)
             # Checa permissões
             print(payload)
-            return payload
+            return f(*xs, **kws)
+            # return payload
         except Exception as e:
             print(f'Exception encountered: {e}')
             raise Exception('Unauthorized')

@@ -14,8 +14,10 @@ def test_contact_email():
 
 def test_user_delete():
     event = {"header": "{\"authorization\": \"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.tH6BhwzSaxqKD4fh1GmCkn2ZlCeau2f_GdsTM7D8vp0\"}"}
-    
+
     response = delete(event, None)
 
-    assert response == {"ok": 1}
+    body = json.loads(response["body"])
+
+    assert body == {"ok": 1}
     
