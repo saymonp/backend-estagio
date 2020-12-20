@@ -2,6 +2,7 @@ import traceback
 import functools
 import json
 import jwt
+from typing import Callable
 
 from .errors import AppError
 from .env import JWT_SECRET
@@ -41,11 +42,40 @@ def parametrized(dec):
     return layer
 
 @parametrized
-def auth(f, permission):
+def auth(f: Callable, permission: str):
+    """Authentication for functions.
+
+    Check the validation of the user's token and permissions for functions that need authentication,
+    used as a decorator like:
+
+    @auth("delete:user") # Permission required for the function delete, for a case that doesn't need a permission it's @auth(None)
+    @lambda_method
+    def delete(user_id_to_delete, **kwargs):
+        payload = kwargs.get("payload") # Access token payload ex: {'sub': '1234567890', 'name': 'John Doe', 'iat': 1516239022}
+        ...
+        return {"ok": 1}
+
+    Args:
+      function:
+        A restricted function
+      permission:
+        If the user needs specific permission to access the function 
+        use the decorator like @auth("create:product").
+        If no specific permission is required to use the decorator like @auth(None)
+
+    Returns:
+        A dict with the payload of the token.
+        Example:
+        {'sub': '1234567890', 'name': 'John Doe', 'iat': 1516239022}
+
+    Raises:
+      Unauthorized: Failing due to invalid token_method or missing auth_token
+    """
     def aux(*xs, **kws):
-        
-        header = json.loads(xs[0]["header"])
+        print(kws)
+        header = json.loads(kws.get("event")["header"])
         auth_token = header["authorization"]
+        print("token", auth_token)
 
         if not auth_token:
             raise Exception('Unauthorized')
@@ -58,10 +88,10 @@ def auth(f, permission):
         
         try:
             payload = jwt.decode(auth_token, JWT_SECRET)
-            # Checa permissões
+            # TODO Checa permissões
             print(payload)
-            return f(payload, *xs, **kws)
-            # return payload
+
+            return f(payload=payload, *xs, **kws)
         except Exception as e:
             print(f'Exception encountered: {e}')
             raise Exception('Unauthorized')

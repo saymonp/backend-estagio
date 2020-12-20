@@ -5,8 +5,10 @@ from backend.mail.mail import Mail
 
 # pylint: disable=no-value-for-parameter
 
-@auth("delete")
+@auth("delete:user")
 @lambda_method
-def delete(payload=None, *arg1, **arg2):
-    print("payload ain", payload)
+def delete(user_id_to_delete, **kwargs):
+    print("payload ain", kwargs.get("payload"))
+    print(user_id_to_delete)
+    # TODO Deleta usuário do banco
     return {"ok": 1}

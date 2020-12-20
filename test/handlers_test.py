@@ -15,7 +15,7 @@ def test_contact_email():
 def test_user_delete():
     event = {"header": "{\"authorization\": \"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.tH6BhwzSaxqKD4fh1GmCkn2ZlCeau2f_GdsTM7D8vp0\"}"}
 
-    response = delete(event, None)
+    response = delete(1, event=event, context=None)
 
     body = json.loads(response["body"])
 
