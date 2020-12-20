@@ -50,7 +50,7 @@ def auth(f: Callable, permission: str):
 
     @auth("delete:user") # Permission required for the function delete, for a case that doesn't need a permission it's @auth(None)
     @lambda_method
-    def delete(user_id_to_delete, **kwargs):
+    def delete(event, context, **kwargs):
         payload = kwargs.get("payload") # Access token payload ex: {'sub': '1234567890', 'name': 'John Doe', 'iat': 1516239022}
         ...
         return {"ok": 1}
@@ -72,10 +72,8 @@ def auth(f: Callable, permission: str):
       Unauthorized: Failing due to invalid token_method or missing auth_token
     """
     def aux(*xs, **kws):
-        print(kws)
-        header = json.loads(kws.get("event")["header"])
+        header = json.loads(xs[0]["header"])
         auth_token = header["authorization"]
-        print("token", auth_token)
 
         if not auth_token:
             raise Exception('Unauthorized')

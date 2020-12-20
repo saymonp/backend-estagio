@@ -7,8 +7,7 @@ from backend.mail.mail import Mail
 
 @auth("delete:user")
 @lambda_method
-def delete(user_id_to_delete, **kwargs):
-    print("payload ain", kwargs.get("payload"))
-    print(user_id_to_delete)
+def delete(event, context, **kwargs):
+    print("payload", kwargs.get("payload"))
     # TODO Deleta usuário do banco
     return {"ok": 1}
