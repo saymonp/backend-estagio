@@ -7,5 +7,6 @@ from backend.mail.mail import Mail
 
 @auth("delete")
 @lambda_method
-def delete(event, context):
+def delete(payload=None, *arg1, **arg2):
+    print("payload ain", payload)
     return {"ok": 1}

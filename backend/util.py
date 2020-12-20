@@ -60,7 +60,7 @@ def auth(f, permission):
             payload = jwt.decode(auth_token, JWT_SECRET)
             # Checa permissões
             print(payload)
-            return f(*xs, **kws)
+            return f(payload, *xs, **kws)
             # return payload
         except Exception as e:
             print(f'Exception encountered: {e}')
