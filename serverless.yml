@@ -58,8 +58,21 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  test:
+    handler: backend.handlers.user.delete
+    events:
+      - http:
+          path: /api/v1/test
+          method: post
+  testEvent:
+    handler: backend.handlers.user.test_event
+    events:
+      - http:
+          path: /api/v1/testEvent
+          method: post
+
+#  hello:
+#    handler: handler.hello
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
