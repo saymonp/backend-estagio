@@ -58,8 +58,18 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  deleteUser:
+    handler: backend.handlers.user.delete
+    events:
+      - http:
+          path: /api/v1/test
+          method: post
+  sendEmail:
+    handler: backend.handlers.contact_email.send_contact_email
+    events:
+      - http:
+          path: /api/v1/sendContactEmail
+          method: post
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -111,3 +121,6 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+
+plugins:
+  - serverless-python-requirements

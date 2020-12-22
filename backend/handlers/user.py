@@ -1,7 +1,6 @@
 import json
 from ..util import lambda_method, auth
 from ..errors import AppError
-from backend.mail.mail import Mail
 
 # pylint: disable=no-value-for-parameter
 
@@ -9,5 +8,6 @@ from backend.mail.mail import Mail
 @lambda_method
 def delete(event, context, **kwargs):
     print("payload", kwargs.get("payload"))
+    payload = kwargs.get("payload")
     # TODO Deleta usuário do banco
-    return {"ok": 1}
+    return {"ok": event, "payload": payload}
