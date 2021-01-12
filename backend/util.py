@@ -5,7 +5,7 @@ import jwt
 from typing import Callable
 
 from .errors import AppError
-# from .env import JWT_SECRET
+from .env import JWT_SECRET
 
 
 def respond(body, code=200):
@@ -56,7 +56,7 @@ def auth(f: Callable, permission: str):
         return {"ok": 1}
 
     Args:
-      function:
+      f:
         A restricted function
       permission:
         If the user needs specific permission to access the function 
@@ -72,7 +72,6 @@ def auth(f: Callable, permission: str):
       Unauthorized: Failing due to invalid token_method or missing auth_token
     """
     def aux(*xs, **kws):
-        #header = json.loads(xs[0]["headers"])
         auth_token = xs[0].get("headers")["Authorization"]
 
         if not auth_token:
@@ -85,7 +84,7 @@ def auth(f: Callable, permission: str):
             raise Exception('Unauthorized')
         
         try:
-            payload = jwt.decode(auth_token, "banana123")
+            payload = jwt.decode(auth_token, JWT_SECRET)
             # TODO Checa permissões
             print(payload)
 
@@ -93,7 +92,5 @@ def auth(f: Callable, permission: str):
         except Exception as e:
             print(f'Exception encountered: {e}')
             raise Exception('Unauthorized')
-        
-        return f(*xs, **kws)
         
     return aux

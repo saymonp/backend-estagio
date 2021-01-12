@@ -67,6 +67,22 @@ def test_user_registration_with_invalid_email():
 
     assert e.value.args[0] == "Invalid data"
 
+def test_user_validation_email():
+    name = "Saymon Treviso"
+    email = "saimo.treviso@gmail.com"
+    password = "banana123"
+    permissions = ["create:product", "delete:product", "update:product"]
+
+    user = User()
+
+    response_registration = user.register(name, email, password, permissions)
+    print(response_registration)
+    secret_token = db.secretToken.find_one({"_userId": response_registration["_id"]})
+
+    response = user.email_confirmation(secret_token["token"])
+
+    assert response == {"msg": "User verified"}
+
 @pytest.fixture(scope="module",
                 params=[({"name": "Jeff", "email": "activated_user@-.com", "password": "banana123", "isVerified": True}, {"msg": "User already exists"}),
                         ({"name": "Jeff", "email": "activated_user1@-.com", "password": "banana123", "isVerified": True, "permissions": ["create:product"]}, {"msg": "User already exists"})])

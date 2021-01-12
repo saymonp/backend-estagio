@@ -1,23 +1,46 @@
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta
+import jwt
 
 import bcrypt
 
 from ..services.mongo import db
 from ..mail.mail import Mail
 
-
+from ..env import JWT_SECRET
+from backend.errors import AppError
 
 class User(object):
 
     def __init__(self):
         pass
 
-    def login(self):
-        ...
+    def login(self, email, password):
+        if not email or not password:
+            raise Exception("Invalid data")
+
+        user = db.users.find_one({"email": email, "password": password})
+        
+        if not user:
+            raise AppError("User not found").set_code(404)
+
+        if not bcrypt.checkpw(password.encode(), user["password"]):
+            raise AppError("Autentication failed")
+
+        payload = {
+        "sub": user["email"],
+        "exp": datetime.now() + timedelta(hours=12),
+        "id": str(user["_id"]),
+        "name": user["name"],
+        "permissions": user["permissions"]
+        }
+
+        token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+
+        return {"token": token.decode("utf8")}
+
 
     def register(self, name: str, email: str, password: str, permissions: str = None):
-        print(name, email, password, permissions)
         if not name or not email or not password:
             raise Exception("Invalid data")
 
@@ -30,6 +53,7 @@ class User(object):
             if check_user["isVerified"] == True:
                 return {"msg": "User already exists"}
             else:
+                # TODO Verifica senha
                 token = secrets.token_hex(16)
                 db.secretToken.update({"_userId": check_user["_id"]}, {
                                                     "_userId": check_user["_id"], "token": token, "createdAt": datetime.now()}, upsert=True)
@@ -41,7 +65,7 @@ class User(object):
 
                 email_service.send_email(to, reply_to, subject, message)
 
-                return {"msg": "User already exists, new email verification sent"}
+                return {"msg": "User already exists, new email verification sent", "_id": check_user["_id"]}
 
         try:
             inserted_user = db.users.insert_one({
@@ -70,7 +94,7 @@ class User(object):
 
         email_service.send_email(to, reply_to, subject, message)
 
-        return {"msg": "Verification email sent"}
+        return {"msg": "Verification email sent", "_id": inserted_user.inserted_id}
 
 
     def email_confirmation(self, confirmation_token):
@@ -81,7 +105,7 @@ class User(object):
 
         user_id = secret_token["_userId"]
 
-        db.users.find_one_and_update({"_id": user_id}, {"isVerified": True})
+        db.users.update_one({"_id": user_id}, {"$set": {"isVerified": True}})
 
         return {"msg": "User verified"}
 
