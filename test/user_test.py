@@ -83,6 +83,25 @@ def test_user_validation_email():
 
     assert response == {"msg": "User verified"}
 
+def test_user_validation_twice_email():
+    name = "Saymon Treviso"
+    email = "nhs40e+vra5gv6hlusc@sharklasers.com"
+    password = "banana123"
+    permissions = ["create:product", "delete:product", "update:product"]
+
+    user = User()
+
+    response_registration = user.register(name, email, password, permissions)
+    
+    secret_token = db.secretToken.find_one({"_userId": response_registration["_id"]})
+
+    user.email_confirmation(secret_token["token"])
+
+    with pytest.raises(Exception) as e:
+        user.email_confirmation(secret_token["token"])
+
+    assert e.value.args[0] == "No token validation found"
+
 @pytest.fixture(scope="module",
                 params=[({"name": "Jeff", "email": "activated_user@-.com", "password": "banana123", "isVerified": True}, {"msg": "User already exists"}),
                         ({"name": "Jeff", "email": "activated_user1@-.com", "password": "banana123", "isVerified": True, "permissions": ["create:product"]}, {"msg": "User already exists"})])

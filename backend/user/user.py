@@ -107,6 +107,8 @@ class User(object):
 
         db.users.update_one({"_id": user_id}, {"$set": {"isVerified": True}})
 
+        db.secretToken.delete_one({"token": confirmation_token})
+
         return {"msg": "User verified"}
 
     def delete(self):
