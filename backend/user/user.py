@@ -1,8 +1,8 @@
 import secrets
 from datetime import datetime, timedelta
 import jwt
-
 import bcrypt
+from bson import ObjectId
 
 from ..services.mongo import db
 from ..mail.mail import Mail
@@ -15,7 +15,7 @@ class User(object):
     def __init__(self):
         pass
 
-    def login(self, email, password):
+    def login(self, email: str, password: str):
         if not email or not password:
             raise Exception("Invalid data")
 
@@ -53,7 +53,9 @@ class User(object):
             if check_user["isVerified"] == True:
                 return {"msg": "User already exists"}
             else:
-                # TODO Verifica senha
+                if not bcrypt.checkpw(password.encode(), check_user["password"]):
+                    raise AppError("Autentication failed")
+
                 token = secrets.token_hex(16)
                 db.secretToken.update({"_userId": check_user["_id"]}, {
                                                     "_userId": check_user["_id"], "token": token, "createdAt": datetime.now()}, upsert=True)
@@ -65,7 +67,7 @@ class User(object):
 
                 email_service.send_email(to, reply_to, subject, message)
 
-                return {"msg": "User already exists, new email verification sent", "_id": check_user["_id"]}
+                return {"msg": "New email verification sent", "_id": check_user["_id"]}
 
         try:
             inserted_user = db.users.insert_one({
@@ -97,7 +99,7 @@ class User(object):
         return {"msg": "Verification email sent", "_id": inserted_user.inserted_id}
 
 
-    def email_confirmation(self, confirmation_token):
+    def email_confirmation(self, confirmation_token: str):
         secret_token = db.secretToken.find_one({"token": confirmation_token})
 
         if not secret_token:
@@ -111,8 +113,41 @@ class User(object):
 
         return {"msg": "User verified"}
 
-    def delete(self):
-        ...
+    def request_password_reset(self, email: str):
+        """Gera o passwordResetToken e manda para o email"""
+
+        token = secrets.token_hex(16)
+
+        db.users.update_one({"email": email}, {"$set": {"passwordResetToken": token}})
+
+        # Envia email com passwordResetToken
+        to = email
+        reply_to = "No reply"
+        subject = "Redefinição de senha"
+        message = f"Redefinir a sua senha http://localhost:4200/password/reset/{token}"
+
+        email_service = Mail()
+        email_service.send_email(to, reply_to, subject, message)
+        
+        return {"msg": "Password request sent"}
+
+    def password_reset(self, new_password: str, password_reset_token: str):
+        """Verifica passwordResetToken e atualiza senha"""
+
+        verify = db.users.find_one({"passwordResetToken": password_reset_token})
+        if verify:
+            password = bcrypt.hashpw(new_password.encode('utf8'), bcrypt.gensalt())
+            db.users.update_one({"passwordResetToken": password_reset_token}, {"$set": {"password": password}})
+            
+            return {"msg": "Password updated"}
+        else:
+
+            return {"msg": "User not found"}
+
+    def delete(self, id: str, email: str):
+        db.users.delete_one({"_id": ObjectId(id), "email": email})
+
+        return {"msg": "User deleted"}
 
     def add_permissions(self):
         ...

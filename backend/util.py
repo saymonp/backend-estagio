@@ -85,8 +85,11 @@ def auth(f: Callable, permission: str):
         
         try:
             payload = jwt.decode(auth_token, JWT_SECRET)
-            # TODO Checa permissões
-            print(payload)
+
+            permissions = payload["permissions"]
+
+            if permission not in permissions:
+                raise Exception('Unauthorized')
 
             return f(payload=payload, *xs, **kws)
         except Exception as e:
