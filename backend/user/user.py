@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import jwt
 import bcrypt
 from bson import ObjectId
+from typing import List
 
 from ..services.mongo import db
 from ..mail.mail import Mail
@@ -38,7 +39,6 @@ class User(object):
         token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
 
         return {"token": token.decode("utf8")}
-
 
     def register(self, name: str, email: str, password: str, permissions: str = None):
         if not name or not email or not password:
@@ -98,7 +98,6 @@ class User(object):
 
         return {"msg": "Verification email sent", "_id": inserted_user.inserted_id}
 
-
     def email_confirmation(self, confirmation_token: str):
         secret_token = db.secretToken.find_one({"token": confirmation_token})
 
@@ -145,12 +144,18 @@ class User(object):
             return {"msg": "User not found"}
 
     def delete(self, id: str, email: str):
-        db.users.delete_one({"_id": ObjectId(id), "email": email})
+        db.users.delete_one({"_id": id, "email": email})
 
         return {"msg": "User deleted"}
 
-    def add_permissions(self):
-        ...
+    def update_permissions(self, id, permissions: List[str]):
+        db.user.update_one({"_id": id}, {"$set": {"permissions": permissions}})
+    
+    def list_users(self):
+        users = []
 
-    def revoke_permissions(self):
-        ...
+        for x in db.user.find({"isVerified": True}, {"_id": 1, "name": 1, "email": 1, "password": 0, "permissions": 1, "isVerified": 0}):
+            users.append(x)
+
+        return {"users": users}
+
