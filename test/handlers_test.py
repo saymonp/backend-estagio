@@ -2,7 +2,7 @@ import json
 import pytest
 
 from backend.handlers.contact_email import send_contact_email
-from backend.handlers.users import delete, register, request_password_reset, password_reset
+from backend.handlers.users import delete, register, request_password_reset, password_reset, email_confirmation
 
 from backend.user.user import User
 
@@ -45,10 +45,16 @@ def test_user_register():
     assert res["msg"] == "Verification email sent"
 
 def test_user_email_confirmation():
-    ...
+    # confirmation_token
+    event = {"body": "{\"confirmation_token\": \"token\"}"}
+    email_confirmation(event, None)
 
 def test_user_request_password_reset():
-    ...
+    event = {"body": "{\"email\": \"porolac214@bulkbye.com\"}"}
+
+    res = request_password_reset(event, None)
+
+    print(res)
 
 def test_user_password_reset():
     ...
