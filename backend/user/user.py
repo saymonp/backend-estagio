@@ -1,4 +1,4 @@
-#import bcrypt
+import bcrypt
 import secrets
 from datetime import datetime, timedelta
 import jwt
@@ -18,15 +18,15 @@ class User(object):
 
     def login(self, email: str, password: str):
         if not email or not password:
-            raise Exception("Invalid data")
+            raise AppError("Invalid data")
 
         user = db.users.find_one({"email": email, "password": password})
         
         if not user:
             raise AppError("User not found").set_code(404)
 
-        # if not bcrypt.checkpw(password.encode(), user["password"]):
-        #     raise AppError("Autentication failed")
+        if not bcrypt.checkpw(password.encode(), user["password"]):
+             raise AppError("Autentication failed")
 
         payload = {
         "sub": user["email"],
@@ -38,9 +38,9 @@ class User(object):
 
         token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
 
-        return {"token": token.decode("utf8")}
+        return token.decode("utf8")
 
-    def register(self, name: str, email: str, password: str, permissions: str = None):
+    def register(self, name: str, email: str, password: str, permissions: List[str] = None):
         if not name or not email or not password:
             raise Exception("Invalid data")
 
@@ -53,8 +53,8 @@ class User(object):
             if check_user["isVerified"] == True:
                 return {"msg": "User already exists"}
             else:
-                # if not bcrypt.checkpw(password.encode(), check_user["password"]):
-                #     raise AppError("Autentication failed")
+                if not bcrypt.checkpw(password.encode(), check_user["password"]):
+                     raise AppError("Autentication failed")
 
                 token = secrets.token_hex(16)
                 db.secretToken.update({"_userId": check_user["_id"]}, {
@@ -73,7 +73,7 @@ class User(object):
             inserted_user = db.users.insert_one({
                 "name": name,
                 "email": email,
-                "password": "",#bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt()),
+                "password": bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt()),
                 "permissions": permissions,
                 "isVerified": False,
             })
@@ -135,7 +135,7 @@ class User(object):
 
         verify = db.users.find_one({"passwordResetToken": password_reset_token})
         if verify:
-            password = ""#bcrypt.hashpw(new_password.encode('utf8'), bcrypt.gensalt())
+            password = bcrypt.hashpw(new_password.encode('utf8'), bcrypt.gensalt())
             db.users.update_one({"passwordResetToken": password_reset_token}, {"$set": {"password": password}})
             
             return {"msg": "Password updated"}
@@ -149,7 +149,9 @@ class User(object):
         return {"msg": "User deleted"}
 
     def update_permissions(self, id: str, permissions: List[str]):
-        db.user.update_one({"_id": id}, {"$set": {"permissions": permissions}})
+        db.user.update_one({"_id": ObjectId(id)}, {"$set": {"permissions": permissions}})
+
+        return {"user permissions updated": id}
     
     def list_users(self):
         users = []

@@ -2,7 +2,7 @@ import json
 import pytest
 
 from backend.handlers.contact_email import send_contact_email
-from backend.handlers.users import delete, register
+from backend.handlers.users import delete, register, request_password_reset, password_reset
 
 from backend.user.user import User
 
@@ -32,7 +32,26 @@ def test_user_delete():
     assert body == {"deleted user": user_id}
 
 def test_user_register():
-    ...
+    name = "Saymon Treviso1"
+    email = "saymonp.trevisan1@gmail.com"
+    password = "banana123"
+    permissions = ["create:product", "delete:product", "update:product"]
+
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
+    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+    
+    res = register(event, None)
+    print(res)
+    assert res["msg"] == "Verification email sent"
 
 def test_user_email_confirmation():
+    ...
+
+def test_user_request_password_reset():
+    ...
+
+def test_user_password_reset():
+    ...
+
+def test_user_list_users():
     ...
