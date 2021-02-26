@@ -47,7 +47,12 @@ def lambda_method_custom(fun):
     return wrapper
 
 
-def respond_custom(body):
+def respond_custom(body, code=None):
+    if code:
+        return {
+        'statusCode': code,
+        'body': body
+    }
     return body
     
 

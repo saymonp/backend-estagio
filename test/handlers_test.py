@@ -27,9 +27,9 @@ def test_user_delete():
    
     response = delete(event, None)
     print(response)
-    body = json.loads(response["body"])
+    body = response
     
-    assert body == {"deleted user": str(user_id)}
+    assert body == {"deleted user": user_id}
 
 def test_user_register():
     ...

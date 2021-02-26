@@ -15,8 +15,8 @@ import bcrypt
 def delete(event, context, **kwargs):
     body = event["body"]
 
-    # u = User()
-    # u.delete(body["id"], body["email"])
+    u = User()
+    u.delete(body["id"], body["email"])
     
     return {"deleted user": body["id"]}
     
