@@ -45,8 +45,24 @@ provider:
 #            - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    HOST_UMBLER: ${env:HOST_UMBLER}
+    PORT_UMBLER: ${env:PORT_UMBLER}
+    USER_UMBLER: ${env:USER_UMBLER}
+    PASS_UMBLER: ${env:PASS_UMBLER}
+
+    DEV_MONGO_URI: ${env:DEV_MONGO_URI}
+
+    JWT_SECRET: ${env:JWT_SECRET}
+
+    CREATEPRODUCT: ${env:CREATEPRODUCT}
+    DELETEPRODUCT: ${env:DELETEPRODUCT}
+    UPDATEPRODUCT: ${env:UPDATEPRODUCT}
+
+    CREATEUSER: ${env:CREATEUSER}
+    DELETEUSER: ${env:DELETEUSER}
+    UPDATEUSER: ${env:UPDATEUSER}
+
 
 # you can add packaging information here
 #package:
@@ -59,10 +75,10 @@ provider:
 
 functions:
   deleteUser:
-    handler: backend.handlers.user.delete
+    handler: backend.handlers.users.delete
     events:
       - http:
-          path: /api/v1/test
+          path: /api/v1/deleteUser
           method: post
   sendEmail:
     handler: backend.handlers.contact_email.send_contact_email
@@ -124,3 +140,5 @@ functions:
 
 plugins:
   - serverless-python-requirements
+  - serverless-dotenv-plugin
+

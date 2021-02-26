@@ -1,7 +1,7 @@
+#import bcrypt
 import secrets
 from datetime import datetime, timedelta
 import jwt
-import bcrypt
 from bson import ObjectId
 from typing import List
 
@@ -25,8 +25,8 @@ class User(object):
         if not user:
             raise AppError("User not found").set_code(404)
 
-        if not bcrypt.checkpw(password.encode(), user["password"]):
-            raise AppError("Autentication failed")
+        # if not bcrypt.checkpw(password.encode(), user["password"]):
+        #     raise AppError("Autentication failed")
 
         payload = {
         "sub": user["email"],
@@ -53,8 +53,8 @@ class User(object):
             if check_user["isVerified"] == True:
                 return {"msg": "User already exists"}
             else:
-                if not bcrypt.checkpw(password.encode(), check_user["password"]):
-                    raise AppError("Autentication failed")
+                # if not bcrypt.checkpw(password.encode(), check_user["password"]):
+                #     raise AppError("Autentication failed")
 
                 token = secrets.token_hex(16)
                 db.secretToken.update({"_userId": check_user["_id"]}, {
@@ -73,7 +73,7 @@ class User(object):
             inserted_user = db.users.insert_one({
                 "name": name,
                 "email": email,
-                "password": bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt()),
+                "password": "",#bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt()),
                 "permissions": permissions,
                 "isVerified": False,
             })
@@ -135,7 +135,7 @@ class User(object):
 
         verify = db.users.find_one({"passwordResetToken": password_reset_token})
         if verify:
-            password = bcrypt.hashpw(new_password.encode('utf8'), bcrypt.gensalt())
+            password = ""#bcrypt.hashpw(new_password.encode('utf8'), bcrypt.gensalt())
             db.users.update_one({"passwordResetToken": password_reset_token}, {"$set": {"password": password}})
             
             return {"msg": "Password updated"}
@@ -144,11 +144,11 @@ class User(object):
             return {"msg": "User not found"}
 
     def delete(self, id: str, email: str):
-        db.users.delete_one({"_id": id, "email": email})
+        db.users.delete_one({"_id": ObjectId(id), "email": email})
 
         return {"msg": "User deleted"}
 
-    def update_permissions(self, id, permissions: List[str]):
+    def update_permissions(self, id: str, permissions: List[str]):
         db.user.update_one({"_id": id}, {"$set": {"permissions": permissions}})
     
     def list_users(self):

@@ -2,7 +2,9 @@ import json
 import pytest
 
 from backend.handlers.contact_email import send_contact_email
-from backend.handlers.user import delete
+from backend.handlers.users import delete, register
+
+from backend.user.user import User
 
 
 def test_contact_email():
@@ -15,10 +17,22 @@ def test_contact_email():
 
 
 def test_user_delete():
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.tH6BhwzSaxqKD4fh1GmCkn2ZlCeau2f_GdsTM7D8vp0", "Content-Type": "application/json"}}
+    user = User()
+    email = "toDelete@delete"
+    user_to_del = user.register("ToDelete", email, "banana123")
+
+    user_id = user_to_del["_id"]
+
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6ImRlbGV0ZTp1c2VyIn0.SeTu_ZfAORdpmtpiX9YTZ0p97pxGfxGEu3qwjQT07O4", "Content-Type": "application/json"}, "body": f"{{\"id\": \"{user_id}\", \"email\": \"{email}\"}}"}
+   
     response = delete(event, None)
 
     body = json.loads(response["body"])
+    
+    assert body == {"deleted user": str(user_id)}
 
-    assert body == {'ok': {'iat': 1516239022,
-                           'name': 'John Doe', 'sub': '1234567890'}}
+def test_user_register():
+    ...
+
+def test_user_email_confirmation():
+    ...

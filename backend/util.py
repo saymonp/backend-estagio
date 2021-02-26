@@ -84,7 +84,7 @@ def auth(f: Callable, permission: str):
             raise Exception('Unauthorized')
         
         try:
-            payload = jwt.decode(auth_token, JWT_SECRET)
+            payload = jwt.decode(auth_token, JWT_SECRET, algorithms="HS256")
 
             permissions = payload["permissions"]
 
