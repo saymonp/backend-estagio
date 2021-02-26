@@ -2,7 +2,7 @@ import json
 
 from ..user.user import User
 
-from ..util import lambda_method, auth
+from ..util import lambda_method, lambda_method_custom, auth
 from ..errors import AppError
 from ..env import DELETEUSER, UPDATEUSER
 
@@ -11,18 +11,15 @@ import bcrypt
 # pylint: disable=no-value-for-parameter
 
 @auth(DELETEUSER)
-@lambda_method
+@lambda_method_custom
 def delete(event, context, **kwargs):
-    try:
-        #body = json.loads(event)
+    body = event["body"]
 
-        # u = User()
-        # u.delete(body["id"], body["email"])
-        
-        return {"deleted user": event["body"]["id"], "test": bcrypt.gensalt()}
+    # u = User()
+    # u.delete(body["id"], body["email"])
     
-    except Exception as e:
-        raise AppError(f"User deletion failed {e}")
+    return {"deleted user": body["id"]}
+    
 
 @lambda_method
 def login(event, context, **kwargs):

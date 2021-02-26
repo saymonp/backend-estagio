@@ -33,6 +33,24 @@ def lambda_method(fun):
             return respond({'error': str(e), 'class': type(e).__name__}, code=500)
     return wrapper
 
+def lambda_method_custom(fun):
+    @functools.wraps(fun)
+    def wrapper(*args, **kwargs):
+        try:
+            return respond_custom(fun(*args, **kwargs))
+        except AppError as e:
+            traceback.print_exc()
+            return respond_custom({'error': str(e), 'class': type(e).__name__}, code=e.code)
+        except Exception as e:
+            traceback.print_exc()
+            return respond_custom({'error': str(e), 'class': type(e).__name__}, code=500)
+    return wrapper
+
+
+def respond_custom(body):
+    return body
+    
+
 
 def parametrized(dec):
     def layer(*args, **kwargs):

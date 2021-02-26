@@ -23,10 +23,10 @@ def test_user_delete():
 
     user_id = user_to_del["_id"]
 
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6ImRlbGV0ZTp1c2VyIn0.SeTu_ZfAORdpmtpiX9YTZ0p97pxGfxGEu3qwjQT07O4", "Content-Type": "application/json"}, "body": f"{{\"id\": \"{user_id}\", \"email\": \"{email}\"}}"}
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6ImRlbGV0ZTp1c2VyIn0.SeTu_ZfAORdpmtpiX9YTZ0p97pxGfxGEu3qwjQT07O4", "Content-Type": "application/json"}, "body": {"id": user_id, "email": email}}
    
     response = delete(event, None)
-
+    print(response)
     body = json.loads(response["body"])
     
     assert body == {"deleted user": str(user_id)}
