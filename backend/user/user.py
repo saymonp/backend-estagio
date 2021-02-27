@@ -156,7 +156,7 @@ class User(object):
     def list_users(self):
         users = []
 
-        for x in db.user.find({"isVerified": True}, {"_id": 1, "name": 1, "email": 1, "password": 0, "permissions": 1, "isVerified": 0}):
+        for x in db.users.find({"isVerified": True}, {"_id": 1, "name": 1, "email": 1, "permissions": 1}):
             users.append(x)
 
         return {"users": users}

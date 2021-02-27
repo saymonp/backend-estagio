@@ -2,7 +2,7 @@ import json
 import pytest
 
 from backend.handlers.contact_email import send_contact_email
-from backend.handlers.users import delete, register, request_password_reset, password_reset, email_confirmation
+from backend.handlers.users import delete, register, request_password_reset, password_reset, email_confirmation, list_users
 
 from backend.user.user import User
 
@@ -60,4 +60,7 @@ def test_user_password_reset():
     ...
 
 def test_user_list_users():
-    ...
+    event = {"body": "{\"email\": \"porolac214@bulkbye.com\"}"}
+    res = list_users(event, None)
+
+    print(res)
