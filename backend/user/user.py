@@ -11,6 +11,7 @@ from ..mail.mail import Mail
 from ..env import JWT_SECRET
 from backend.errors import AppError
 
+
 class User(object):
 
     def __init__(self):
@@ -21,19 +22,19 @@ class User(object):
             raise AppError("Invalid data").set_code(404)
 
         user = db.users.find_one({"email": email})
-        
+
         if not user:
             raise AppError("User not found").set_code(404)
 
         if not bcrypt.checkpw(password.encode(), user["password"]):
-             raise AppError("Autentication failed").set_code(404)
+            raise AppError("Autentication failed").set_code(404)
 
         payload = {
-        "sub": user["email"],
-        "exp": datetime.now() + timedelta(hours=12),
-        "id": str(user["_id"]),
-        "name": user["name"],
-        "permissions": user["permissions"]
+            "sub": user["email"],
+            "exp": datetime.now() + timedelta(hours=12),
+            "id": str(user["_id"]),
+            "name": user["name"],
+            "permissions": user["permissions"]
         }
 
         token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
@@ -54,11 +55,11 @@ class User(object):
                 return {"msg": "User already exists"}
             else:
                 if not bcrypt.checkpw(password.encode(), check_user["password"]):
-                     raise AppError("Autentication failed")
+                    raise AppError("Autentication failed")
 
                 token = secrets.token_hex(16)
                 db.secretToken.update({"_userId": check_user["_id"]}, {
-                                                    "_userId": check_user["_id"], "token": token, "createdAt": datetime.now()}, upsert=True)
+                    "_userId": check_user["_id"], "token": token, "createdAt": datetime.now()}, upsert=True)
                 # Envia email com novo token
                 to = check_user["email"]
                 reply_to = "No reply"
@@ -117,7 +118,8 @@ class User(object):
 
         token = secrets.token_hex(16)
 
-        db.users.update_one({"email": email}, {"$set": {"passwordResetToken": token}})
+        db.users.update_one({"email": email}, {
+                            "$set": {"passwordResetToken": token}})
 
         # Envia email com passwordResetToken
         to = email
@@ -127,17 +129,20 @@ class User(object):
 
         email_service = Mail()
         email_service.send_email(to, reply_to, subject, message)
-        
+
         return {"msg": "Password request sent"}
 
     def password_reset(self, new_password: str, password_reset_token: str):
         """Verifica passwordResetToken e atualiza senha"""
 
-        verify = db.users.find_one({"passwordResetToken": password_reset_token})
+        verify = db.users.find_one(
+            {"passwordResetToken": password_reset_token})
         if verify:
-            password = bcrypt.hashpw(new_password.encode('utf8'), bcrypt.gensalt())
-            db.users.update_one({"passwordResetToken": password_reset_token}, {"$set": {"password": password}})
-            
+            password = bcrypt.hashpw(
+                new_password.encode('utf8'), bcrypt.gensalt())
+            db.users.update_one({"passwordResetToken": password_reset_token}, {
+                                "$set": {"password": password}})
+
             return {"msg": "Password updated"}
         else:
 
@@ -149,10 +154,11 @@ class User(object):
         return {"msg": "User deleted"}
 
     def update_permissions(self, id: str, permissions: List[str]):
-        db.users.update_one({"_id": ObjectId(id)}, {"$set": {"permissions": permissions}})
+        db.users.update_one({"_id": ObjectId(id)}, {
+                            "$set": {"permissions": permissions}})
 
         return {"user permissions updated": id}
-    
+
     def list_users(self):
         users = []
 
@@ -160,4 +166,3 @@ class User(object):
             users.append(x)
 
         return {"users": users}
-

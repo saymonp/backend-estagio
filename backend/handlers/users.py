@@ -10,6 +10,7 @@ import bcrypt
 
 # pylint: disable=no-value-for-parameter
 
+
 @auth(DELETEUSER)
 @lambda_method_custom
 def delete(event, context, **kwargs):
@@ -17,8 +18,9 @@ def delete(event, context, **kwargs):
 
     u = User()
     u.delete(body["id"], body["email"])
-    
+
     return {"deleted user": body["id"]}
+
 
 @auth(UPDATEUSER)
 @lambda_method_custom
@@ -29,17 +31,20 @@ def update_permissions(event, context, **kwargs):
     response = u.update_permissions(body["id"], body["permissions"])
 
     return response
-    
+
+
 @auth(CREATEUSER)
 @lambda_method_custom
 def register(event, context, **kwargs):
-    
+
     body = event["body"]
 
     u = User()
-    response = u.register(body["name"], body["email"], body["password"], permissions=body["permissions"] if "permissions" in body else None)
+    response = u.register(body["name"], body["email"], body["password"],
+                          permissions=body["permissions"] if "permissions" in body else None)
 
     return {"msg": response["msg"], "_id": str(response["_id"]) if "_id" in response else None}
+
 
 @lambda_method
 def login(event, context, **kwargs):
@@ -50,6 +55,7 @@ def login(event, context, **kwargs):
 
     return {"token": token}
 
+
 @lambda_method
 def email_confirmation(event, context, **kwargs):
     body = json.loads(event["body"])
@@ -58,6 +64,7 @@ def email_confirmation(event, context, **kwargs):
     response = u.email_confirmation(body["confirmationToken"])
 
     return response
+
 
 @lambda_method
 def request_password_reset(event, context, **kwargs):
@@ -69,14 +76,17 @@ def request_password_reset(event, context, **kwargs):
 
     return response
 
+
 @lambda_method
 def password_reset(event, context, **kwargs):
     body = json.loads(event["body"])
 
     u = User()
-    response = u.password_reset(body["newPassword"], body["passwordResetToken"])
+    response = u.password_reset(
+        body["newPassword"], body["passwordResetToken"])
 
     return response
+
 
 @lambda_method
 def list_users(event, context, **kwargs):

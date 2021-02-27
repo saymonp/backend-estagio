@@ -33,6 +33,7 @@ def lambda_method(fun):
             return respond({'error': str(e), 'class': type(e).__name__}, code=500)
     return wrapper
 
+
 def lambda_method_custom(fun):
     @functools.wraps(fun)
     def wrapper(*args, **kwargs):
@@ -50,11 +51,10 @@ def lambda_method_custom(fun):
 def respond_custom(body, code=None):
     if code:
         return {
-        'statusCode': code,
-        'body': body
-    }
+            'statusCode': code,
+            'body': body
+        }
     return body
-    
 
 
 def parametrized(dec):
@@ -63,6 +63,7 @@ def parametrized(dec):
             return dec(f, *args, **kwargs)
         return repl
     return layer
+
 
 @parametrized
 def auth(f: Callable, permission: str):
@@ -105,7 +106,7 @@ def auth(f: Callable, permission: str):
         if not auth_token or token_method.lower() != 'bearer':
             print("Failing due to invalid token_method or missing auth_token")
             raise Exception('Unauthorized')
-        
+
         try:
             payload = jwt.decode(auth_token, JWT_SECRET, algorithms="HS256")
 
@@ -118,5 +119,5 @@ def auth(f: Callable, permission: str):
         except Exception as e:
             print(f'Exception encountered: {e}')
             raise Exception('Unauthorized')
-        
+
     return aux

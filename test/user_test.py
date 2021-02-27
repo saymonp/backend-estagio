@@ -3,6 +3,7 @@ import pytest
 from backend.user.user import User
 from backend.services.mongo import db
 
+
 def test_user_registration():
     name = "Saymon Treviso"
     email = "saymonp.trevisan@gmail.com"
@@ -14,6 +15,7 @@ def test_user_registration():
     response = user.register(name, email, password, permissions)
 
     assert response == {"msg": "Verification email sent"}
+
 
 def test_user_registration_twice():
     name = "Saymon Treviso"
@@ -27,21 +29,25 @@ def test_user_registration_twice():
 
     response = user.register(name, email, password, permissions)
 
-    assert response == {"msg": "User already exists, new email verification sent"}
+    assert response == {
+        "msg": "User already exists, new email verification sent"}
+
 
 def test_user_registration_with_an_activated_user(verified_user):
     u, expected_response = verified_user
-    
+
     db.users.insert_one(u)
 
     user = User()
 
     if "permissions" in u:
-        response = user.register(u["name"], u["email"], u["password"], u["permissions"])
-    else: 
+        response = user.register(
+            u["name"], u["email"], u["password"], u["permissions"])
+    else:
         response = user.register(u["name"], u["email"], u["password"])
 
     assert response == expected_response
+
 
 def test_user_registration_with_out_permissions():
     name = "Saymon Treviso"
@@ -53,6 +59,7 @@ def test_user_registration_with_out_permissions():
     response = user.register(name, email, password)
 
     assert response == {"msg": "Verification email sent"}
+
 
 def test_user_registration_with_invalid_email():
     name = "Saymon Treviso"
@@ -67,6 +74,7 @@ def test_user_registration_with_invalid_email():
 
     assert e.value.args[0] == "Invalid data"
 
+
 def test_user_validation_email():
     name = "Saymon Treviso"
     email = "saimo.treviso@gmail.com"
@@ -77,11 +85,13 @@ def test_user_validation_email():
 
     response_registration = user.register(name, email, password, permissions)
     print(response_registration)
-    secret_token = db.secretToken.find_one({"_userId": response_registration["_id"]})
+    secret_token = db.secretToken.find_one(
+        {"_userId": response_registration["_id"]})
 
     response = user.email_confirmation(secret_token["token"])
 
     assert response == {"msg": "User verified"}
+
 
 def test_user_validation_twice_email():
     name = "Saymon Treviso"
@@ -92,8 +102,9 @@ def test_user_validation_twice_email():
     user = User()
 
     response_registration = user.register(name, email, password, permissions)
-    
-    secret_token = db.secretToken.find_one({"_userId": response_registration["_id"]})
+
+    secret_token = db.secretToken.find_one(
+        {"_userId": response_registration["_id"]})
 
     user.email_confirmation(secret_token["token"])
 
@@ -101,6 +112,7 @@ def test_user_validation_twice_email():
         user.email_confirmation(secret_token["token"])
 
     assert e.value.args[0] == "No token validation found"
+
 
 @pytest.fixture(scope="module",
                 params=[({"name": "Jeff", "email": "activated_user@-.com", "password": "banana123", "isVerified": True}, {"msg": "User already exists"}),

@@ -3,6 +3,7 @@ from ..util import lambda_method
 from ..errors import AppError
 from backend.mail.mail import Mail
 
+
 @lambda_method
 def send_contact_email(event, context):
     body = json.loads(event["body"])
@@ -19,8 +20,6 @@ def send_contact_email(event, context):
 
     reply_to = f"{client_first_name} {client_last_name} <{client_email}>"
 
-    
     email.send_email(to, reply_to, subject, message)
 
     return {"ok": "Email sent"}
-   

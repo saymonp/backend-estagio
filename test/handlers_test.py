@@ -1,6 +1,7 @@
 import json
 import pytest
-import random, string
+import random
+import string
 import json
 
 from backend.handlers.contact_email import send_contact_email
@@ -26,13 +27,15 @@ def test_user_delete():
 
     user_id = user_to_del["_id"]
 
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6ImRlbGV0ZTp1c2VyIn0.SeTu_ZfAORdpmtpiX9YTZ0p97pxGfxGEu3qwjQT07O4", "Content-Type": "application/json"}, "body": {"id": user_id, "email": email}}
-   
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6ImRlbGV0ZTp1c2VyIn0.SeTu_ZfAORdpmtpiX9YTZ0p97pxGfxGEu3qwjQT07O4",
+                         "Content-Type": "application/json"}, "body": {"id": user_id, "email": email}}
+
     response = delete(event, None)
     print(response)
     body = response
-    
+
     assert body == {"deleted user": user_id}
+
 
 def test_user_register():
     name = "Saymon Treviso1"
@@ -40,9 +43,9 @@ def test_user_register():
     password = "banana123"
     permissions = ["create:product", "delete:product", "update:product"]
 
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
-    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
-    
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"},
+             "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+
     res = register(event, None)
 
     assert res["msg"] == "Verification email sent"
@@ -54,13 +57,16 @@ def test_user_list_users():
 
     print(res)
 
+
 def test_user_login():
-    event = {"body": "{\"email\": \"nhs40e+vra5gv6hlusc@sharklasers.com\", \"password\": \"banana123\"}"}
+    event = {
+        "body": "{\"email\": \"nhs40e+vra5gv6hlusc@sharklasers.com\", \"password\": \"banana123\"}"}
     res = login(event, None)
 
     have_token = "token" in res["body"]
 
     assert True == have_token
+
 
 def test_user_update_permissions():
     # register
@@ -69,9 +75,9 @@ def test_user_update_permissions():
     password = "banana123"
     permissions = ["update:user"]
 
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
-    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
-    
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"},
+             "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+
     res = register(event, None)
 
     assert res["msg"] == "Verification email sent"
@@ -83,9 +89,9 @@ def test_user_update_permissions():
     secret_token = db.secretToken.find_one({"_userId": userid})
 
     token = secret_token["token"]
-    
+
     event = {"body": f"{{\"confirmation_token\": \"{token}\"}}"}
-    
+
     response = email_confirmation(event, None)
 
     assert json.loads(response["body"]) == {"msg": "User verified"}
@@ -95,16 +101,18 @@ def test_user_update_permissions():
     res = login(event, None)
 
     have_token = "token" in res["body"]
-    
+
     access_token = json.loads(res["body"])["token"]
 
-    event = {"headers": 
-    {"Authorization": f"bearer {access_token}", "Content-Type": "application/json"},
-    "body": {"id": str(userid), "permissions": ["update:user", "create:product", "delete:product", "update:product"]}}
+    event = {"headers":
+             {"Authorization": f"bearer {access_token}",
+                 "Content-Type": "application/json"},
+             "body": {"id": str(userid), "permissions": ["update:user", "create:product", "delete:product", "update:product"]}}
 
     res = update_permissions(event, None)
-    
+
     assert res == {"user permissions updated": str(userid)}
+
 
 def test_user_password_reset():
     # register
@@ -113,9 +121,9 @@ def test_user_password_reset():
     password = "banana123"
     permissions = ["create:product", "delete:product", "update:product"]
 
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
-    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
-    
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"},
+             "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+
     res = register(event, None)
 
     assert res["msg"] == "Verification email sent"
@@ -127,13 +135,13 @@ def test_user_password_reset():
     secret_token = db.secretToken.find_one({"_userId": userId})
 
     token = secret_token["token"]
-    
+
     event = {"body": f"{{\"confirmation_token\": \"{token}\"}}"}
-    
+
     response = email_confirmation(event, None)
 
     assert json.loads(response["body"]) == {"msg": "User verified"}
-    
+
     # request_password_reset
     event = {"body": f"{{\"email\": \"{email}\"}}"}
 
@@ -168,6 +176,7 @@ def test_user_password_reset():
     print("reset", reset_response)
     assert json.loads(reset_response["body"]) == {"msg": "Password updated"}
 
+
 def test_user_email_confirmation():
     # register
     name = randstr(4)
@@ -175,9 +184,9 @@ def test_user_email_confirmation():
     password = "banana123"
     permissions = ["create:product", "delete:product", "update:product"]
 
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
-    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
-    
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"},
+             "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+
     res = register(event, None)
 
     assert res["msg"] == "Verification email sent"
@@ -189,9 +198,9 @@ def test_user_email_confirmation():
     secret_token = db.secretToken.find_one({"_userId": userId})
 
     token = secret_token["token"]
-    
+
     event = {"body": f"{{\"confirmation_token\": \"{token}\"}}"}
-    
+
     response = email_confirmation(event, None)
     print(response)
     assert json.loads(response["body"]) == {"msg": "User verified"}
