@@ -1,10 +1,13 @@
 import json
 import pytest
+import random, string
+import json
 
 from backend.handlers.contact_email import send_contact_email
-from backend.handlers.users import login, delete, register, request_password_reset, password_reset, email_confirmation, list_users
+from backend.handlers.users import login, delete, register, request_password_reset, password_reset, email_confirmation, list_users, update_permissions
 
 from backend.user.user import User
+from backend.services.mongo import db
 
 
 def test_contact_email():
@@ -33,7 +36,7 @@ def test_user_delete():
 
 def test_user_register():
     name = "Saymon Treviso1"
-    email = "saymonp.trevisan1@gmail.com"
+    email = "porolac214@bulkbye.com"
     password = "banana123"
     permissions = ["create:product", "delete:product", "update:product"]
 
@@ -41,23 +44,9 @@ def test_user_register():
     "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
     
     res = register(event, None)
-    print(res)
+
     assert res["msg"] == "Verification email sent"
 
-def test_user_email_confirmation():
-    # confirmation_token
-    event = {"body": "{\"confirmation_token\": \"token\"}"}
-    email_confirmation(event, None)
-
-def test_user_request_password_reset():
-    event = {"body": "{\"email\": \"porolac214@bulkbye.com\"}"}
-
-    res = request_password_reset(event, None)
-
-    print(res)
-
-def test_user_password_reset():
-    ...
 
 def test_user_list_users():
     event = {"body": "{\"email\": \"porolac214@bulkbye.com\"}"}
@@ -65,10 +54,67 @@ def test_user_list_users():
 
     print(res)
 
-def test_user_list_login():
+def test_user_login():
     event = {"body": "{\"email\": \"nhs40e+vra5gv6hlusc@sharklasers.com\", \"password\": \"banana123\"}"}
     res = login(event, None)
-    print(res)
+
     have_token = "token" in res["body"]
 
     assert True == have_token
+
+def test_user_update_permissions():
+    # register
+
+    event = {"headers": 
+    {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"},
+    "body": {"id": "", "permissions": [""]}}
+
+    update_permissions(event, None)
+
+
+    ...
+
+
+@pytest.mark.skip(reason="no way of currently testing this")
+def test_user_password_reset():
+    # register
+
+    event = {"body": "{\"email\": \"porolac214@bulkbye.com\"}"}
+
+    request_password_reset(event, None)
+
+    event = {"body": "{\"newPassword\": \"321ananab\", \"passwordResetToken\": \"1aeee1cf630ce35d8c0adfc2b46d617e\"}"}
+
+    password_reset(event, None)
+
+def test_user_email_confirmation():
+    # register
+    name = randstr(4)
+    email = f"{randstr(4)}@{randstr(3)}.com"
+    password = "banana123"
+    permissions = ["create:product", "delete:product", "update:product"]
+
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
+    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+    
+    res = register(event, None)
+
+    assert res["msg"] == "Verification email sent"
+
+    # Get Token
+    user = db.users.find_one({"email": email})
+    userId = user["_id"]
+
+    secret_token = db.secretToken.find_one({"_userId": userId})
+
+    token = secret_token["token"]
+    
+    event = {"body": f"{{\"confirmation_token\": \"{token}\"}}"}
+    
+    response = email_confirmation(event, None)
+    print(response)
+    assert json.loads(response["body"]) == {"msg": "User verified"}
+
+
+def randstr(length):
+    return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
