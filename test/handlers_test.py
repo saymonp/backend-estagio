@@ -64,13 +64,47 @@ def test_user_login():
 
 def test_user_update_permissions():
     # register
+    name = randstr(4)
+    email = f"{randstr(4)}@{randstr(3)}.com"
+    password = "banana123"
+    permissions = ["update:user"]
+
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
+    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+    
+    res = register(event, None)
+
+    assert res["msg"] == "Verification email sent"
+
+    # Get Token
+    user = db.users.find_one({"email": email})
+    userid = user["_id"]
+
+    secret_token = db.secretToken.find_one({"_userId": userid})
+
+    token = secret_token["token"]
+    
+    event = {"body": f"{{\"confirmation_token\": \"{token}\"}}"}
+    
+    response = email_confirmation(event, None)
+
+    assert json.loads(response["body"]) == {"msg": "User verified"}
+
+    # login
+    event = {"body": f"{{\"email\": \"{email}\", \"password\": \"banana123\"}}"}
+    res = login(event, None)
+
+    have_token = "token" in res["body"]
+    
+    access_token = json.loads(res["body"])["token"]
 
     event = {"headers": 
-    {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"},
-    "body": {"id": "", "permissions": [""]}}
+    {"Authorization": f"bearer {access_token}", "Content-Type": "application/json"},
+    "body": {"id": str(userid), "permissions": ["update:user", "create:product", "delete:product", "update:product"]}}
 
-    update_permissions(event, None)
-    ...
+    res = update_permissions(event, None)
+    
+    assert res == {"user permissions updated": str(userid)}
 
 def test_user_password_reset():
     # register
