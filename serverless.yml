@@ -79,7 +79,49 @@ functions:
     events:
       - http:
           path: /api/v1/deleteUser
+          method: delete
+  updatePermissions:
+    handler: backend.handlers.users.update_permissions
+    events:
+      - http:
+          path: /api/v1/updatePermissions
           method: post
+  register:
+    handler: backend.handlers.users.register
+    events:
+      - http:
+          path: /api/v1/register
+          method: post
+  login:
+    handler: backend.handlers.users.login
+    events:
+      - http:
+          path: /api/v1/login
+          method: post
+  emailConfirmation:
+    handler: backend.handlers.users.email_confirmation
+    events:
+      - http:
+          path: /api/v1/emailConfirmation
+          method: post
+  requestPasswordReset:
+    handler: backend.handlers.users.request_password_reset
+    events:
+      - http:
+          path: /api/v1/requestPasswordReset
+          method: post
+  passwordReset:
+    handler: backend.handlers.users.password_reset
+    events:
+      - http:
+          path: /api/v1/passwordReset
+          method: post
+  listUsers:
+    handler: backend.handlers.users.list_users
+    events:
+      - http:
+          path: /api/v1/listUsers
+          method: get
   sendEmail:
     handler: backend.handlers.contact_email.send_contact_email
     events:
