@@ -2,7 +2,7 @@ import json
 import pytest
 
 from backend.handlers.contact_email import send_contact_email
-from backend.handlers.users import delete, register, request_password_reset, password_reset, email_confirmation, list_users
+from backend.handlers.users import login, delete, register, request_password_reset, password_reset, email_confirmation, list_users
 
 from backend.user.user import User
 
@@ -64,3 +64,11 @@ def test_user_list_users():
     res = list_users(event, None)
 
     print(res)
+
+def test_user_list_login():
+    event = {"body": "{\"email\": \"nhs40e+vra5gv6hlusc@sharklasers.com\", \"password\": \"banana123\"}"}
+    res = login(event, None)
+    print(res)
+    have_token = "token" in res["body"]
+
+    assert True == have_token

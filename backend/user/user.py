@@ -20,13 +20,13 @@ class User(object):
         if not email or not password:
             raise AppError("Invalid data")
 
-        user = db.users.find_one({"email": email, "password": password})
+        user = db.users.find_one({"email": email})
         
         if not user:
             raise AppError("User not found").set_code(404)
 
         if not bcrypt.checkpw(password.encode(), user["password"]):
-             raise AppError("Autentication failed")
+             raise AppError("Autentication failed").set_code(404)
 
         payload = {
         "sub": user["email"],
@@ -37,8 +37,8 @@ class User(object):
         }
 
         token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
-
-        return token.decode("utf8")
+        print(token)
+        return token
 
     def register(self, name: str, email: str, password: str, permissions: List[str] = None):
         if not name or not email or not password:

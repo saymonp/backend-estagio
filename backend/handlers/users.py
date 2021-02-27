@@ -42,7 +42,7 @@ def register(event, context, **kwargs):
 
 @lambda_method
 def login(event, context, **kwargs):
-    body = event["body"]
+    body = json.loads(event["body"])
 
     u = User()
     token = u.login(body["email"], body["password"])
