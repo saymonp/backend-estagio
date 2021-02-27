@@ -70,22 +70,69 @@ def test_user_update_permissions():
     "body": {"id": "", "permissions": [""]}}
 
     update_permissions(event, None)
-
-
     ...
 
-
-@pytest.mark.skip(reason="no way of currently testing this")
 def test_user_password_reset():
     # register
+    name = randstr(4)
+    email = f"{randstr(4)}@{randstr(3)}.com"
+    password = "banana123"
+    permissions = ["create:product", "delete:product", "update:product"]
 
-    event = {"body": "{\"email\": \"porolac214@bulkbye.com\"}"}
+    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"}, 
+    "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
+    
+    res = register(event, None)
 
-    request_password_reset(event, None)
+    assert res["msg"] == "Verification email sent"
 
-    event = {"body": "{\"newPassword\": \"321ananab\", \"passwordResetToken\": \"1aeee1cf630ce35d8c0adfc2b46d617e\"}"}
+    # Get Token
+    user = db.users.find_one({"email": email})
+    userId = user["_id"]
 
-    password_reset(event, None)
+    secret_token = db.secretToken.find_one({"_userId": userId})
+
+    token = secret_token["token"]
+    
+    event = {"body": f"{{\"confirmation_token\": \"{token}\"}}"}
+    
+    response = email_confirmation(event, None)
+
+    assert json.loads(response["body"]) == {"msg": "User verified"}
+    
+    # request_password_reset
+    event = {"body": f"{{\"email\": \"{email}\"}}"}
+
+    response = request_password_reset(event, None)
+    print("reset", response)
+    assert json.loads(response["body"]) == {"msg": "Password request sent"}
+
+    user = db.users.find_one({"email": email})
+
+    password_reset_token = user["passwordResetToken"]
+
+    event = {"body": f"{{\"newPassword\": \"321ananab\", \"passwordResetToken\": \"{password_reset_token}\"}}"}
+
+    reset_response = password_reset(event, None)
+    print("reset", reset_response)
+    assert json.loads(reset_response["body"]) == {"msg": "Password updated"}
+
+    # second request_password_reset
+    event = {"body": f"{{\"email\": \"{email}\"}}"}
+
+    response = request_password_reset(event, None)
+    print("reset", response)
+    assert json.loads(response["body"]) == {"msg": "Password request sent"}
+
+    user = db.users.find_one({"email": email})
+
+    password_reset_token = user["passwordResetToken"]
+
+    event = {"body": f"{{\"newPassword\": \"321ananab\", \"passwordResetToken\": \"{password_reset_token}\"}}"}
+
+    reset_response = password_reset(event, None)
+    print("reset", reset_response)
+    assert json.loads(reset_response["body"]) == {"msg": "Password updated"}
 
 def test_user_email_confirmation():
     # register

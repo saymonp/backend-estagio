@@ -60,6 +60,7 @@ def email_confirmation(event, context, **kwargs):
 
 @lambda_method
 def request_password_reset(event, context, **kwargs):
+
     body = json.loads(event["body"])
 
     u = User()
