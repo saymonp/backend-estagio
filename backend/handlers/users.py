@@ -55,7 +55,7 @@ def email_confirmation(event, context, **kwargs):
     body = json.loads(event["body"])
 
     u = User()
-    response = u.email_confirmation(body["confirmation_token"])
+    response = u.email_confirmation(body["confirmationToken"])
 
     return response
 
