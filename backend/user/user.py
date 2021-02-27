@@ -149,7 +149,7 @@ class User(object):
         return {"msg": "User deleted"}
 
     def update_permissions(self, id: str, permissions: List[str]):
-        db.user.update_one({"_id": ObjectId(id)}, {"$set": {"permissions": permissions}})
+        db.users.update_one({"_id": ObjectId(id)}, {"$set": {"permissions": permissions}})
 
         return {"user permissions updated": id}
     
