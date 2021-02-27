@@ -33,12 +33,13 @@ def update_permissions(event, context, **kwargs):
 @auth(CREATEUSER)
 @lambda_method_custom
 def register(event, context, **kwargs):
+    
     body = event["body"]
 
     u = User()
     response = u.register(body["name"], body["email"], body["password"], permissions=body["permissions"] if "permissions" in body else None)
 
-    return {"msg": response["msg"], "_id": response["_id"] if "_id" in response else None}
+    return {"msg": response["msg"], "_id": str(response["_id"]) if "_id" in response else None}
 
 @lambda_method
 def login(event, context, **kwargs):

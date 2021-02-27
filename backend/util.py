@@ -72,7 +72,7 @@ def auth(f: Callable, permission: str):
     used as a decorator like:
 
     @auth("delete:user") # Permission required for the function delete, for a case that doesn't need a permission it's @auth(None)
-    @lambda_method
+    @lambda_method_custom
     def delete(event, context, **kwargs):
         payload = kwargs.get("payload") # Access token payload ex: {'sub': '1234567890', 'name': 'John Doe', 'iat': 1516239022}
         ...

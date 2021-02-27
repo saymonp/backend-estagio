@@ -18,7 +18,7 @@ class User(object):
 
     def login(self, email: str, password: str):
         if not email or not password:
-            raise AppError("Invalid data")
+            raise AppError("Invalid data").set_code(404)
 
         user = db.users.find_one({"email": email})
         
@@ -42,7 +42,7 @@ class User(object):
 
     def register(self, name: str, email: str, password: str, permissions: List[str] = None):
         if not name or not email or not password:
-            raise Exception("Invalid data")
+            raise AppError("Invalid data").set_code(404)
 
         email_service = Mail()
 
@@ -102,7 +102,7 @@ class User(object):
         secret_token = db.secretToken.find_one({"token": confirmation_token})
 
         if not secret_token:
-            raise Exception("No token validation found")
+            raise AppError("No token validation found").set_code(404)
 
         user_id = secret_token["_userId"]
 
