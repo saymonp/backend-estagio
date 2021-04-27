@@ -51,9 +51,9 @@ def login(event, context, **kwargs):
     body = json.loads(event["body"])
 
     u = User()
-    token = u.login(body["email"], body["password"])
+    user = u.login(body["email"], body["password"])
 
-    return {"token": token}
+    return {"user": user}
 
 
 @lambda_method

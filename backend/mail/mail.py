@@ -2,14 +2,14 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from ..env import HOST_UMBLER, PORT_UMBLER, USER_UMBLER, PASS_UMBLER
+from ..env import HOST_ZOHO, PORT_ZOHO, USER_ZOHO, PASS_ZOHO
 
 
 class Mail(object):
-    host_server = HOST_UMBLER
-    port_server = PORT_UMBLER
-    user_server = USER_UMBLER
-    password_server = PASS_UMBLER
+    host_server = HOST_ZOHO
+    port_server = PORT_ZOHO
+    user_server = USER_ZOHO
+    password_server = PASS_ZOHO
 
     def __init__(self):
         pass

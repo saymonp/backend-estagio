@@ -3,10 +3,16 @@ import functools
 import json
 import jwt
 from typing import Callable
+from collections import namedtuple
 
 from .errors import AppError
 from .env import JWT_SECRET
 
+
+def dict_to_namedtuple(typename, data):
+    return namedtuple(typename, data.keys())(
+        *(dict_to_namedtuple(typename + '_' + k, v) if isinstance(v, dict) else v for k, v in data.items())
+    )
 
 def respond(body, code=200):
     return {

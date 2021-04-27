@@ -11,7 +11,7 @@ def test_send_email():
     reply_to = f"{first_name} {last_name} <{client_email}>"
     to = email.user_server
 
-    email.send_email(to, reply_to, "Teste Serverless",
+    email.send_email(to, reply_to, "Teste Serverless2",
                      "Enviando E-mail do python serverless")
 
     assert True == True
