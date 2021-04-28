@@ -27,17 +27,17 @@ class S3(object):
         self.limits = size_limits
         self.region = region
 
-    def upload(self, file, object_name):
+    def upload(self, file, object_name, path=None):
         if object_name.lower().endswith(self.allowed_mimes) == True:
             pass
         else:
             raise AppError("Invalid data").set_code(404)
 
-        key = str(uuid.uuid4()) + object_name
+        key = path + str(uuid.uuid4()) + object_name
 
         try:
-            response = s3_client.upload_fileobj(
-                file, self.bucket, key, ExtraArgs={'ACL': 'public-read'})
+            response = s3_client.put_object(
+                Body=file, Bucket=self.bucket, Key=key, ACL='public-read')
             url = f"https://{self.bucket}.s3.{self.region}.amazonaws.com/{key}"
         except ClientError as e:
             logging.error(e)
