@@ -2,6 +2,8 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 import uuid
+import re
+from base64 import b64decode
 
 from ..config.s3config import s3config
 from backend.errors import AppError
@@ -16,11 +18,19 @@ s3_client = boto3.client('s3',
 class S3(object):
 
     allowed_mimes = (
-        "jpeg",
-        "pjpeg",
-        "jpg",
-        "png",
-        "stl", "obj", "fbx", "collada", "3ds", "iges", "step", "vrml", "x3d")
+        "image/jpeg",
+        "image/pjpeg",
+        "image/png",
+        "application/zip",
+        "application/x-rar-compressed",
+        "application/sla",
+        "application/object",
+        "application/x-3ds", 
+        "image/x-3ds",
+        "model/x3d+vrml",
+        "model/x3d+xml",
+        "model/x3d+binary"
+        "application/vnd")
 
     def __init__(self, bucket_name, region, size_limits):
         self.bucket = bucket_name
@@ -28,20 +38,30 @@ class S3(object):
         self.region = region
 
     def upload(self, file, object_name, path=None):
-        if object_name.lower().endswith(self.allowed_mimes) == True:
+        match = re.search("data:(\w+/\w+);base64,(.+)", file)
+
+        mime = match.group(1)
+        base64 = match.group(2)
+
+        if mime.endswith(self.allowed_mimes) == True:
             pass
         else:
             raise AppError("Invalid data").set_code(404)
+
+        filedata = b64decode(base64)
 
         key = path + str(uuid.uuid4()) + object_name
 
         try:
             response = s3_client.put_object(
-                Body=file, Bucket=self.bucket, Key=key, ACL='public-read')
+                Body=filedata, Bucket=self.bucket, Key=key, ACL='public-read')
             url = f"https://{self.bucket}.s3.{self.region}.amazonaws.com/{key}"
+
         except ClientError as e:
             logging.error(e)
+
             return False
+
         return {"file_url": url, "key": key}
 
     def delete(self, key):

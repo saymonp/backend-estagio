@@ -133,41 +133,17 @@ functions:
       - http:
           path: /api/v1/sendContactEmail
           method: post
-  uploadImageProduct:
-    handler: backend.handlers.s3.upload_image_product
+  uploadFile:
+    handler: backend.handlers.s3.upload_file
     events:
       - http:
-          path: /api/v1/uploadImageProduct/{fileName}
+          path: /api/v1/uploadFile
           method: post
-  uploadImageProject:
-    handler: backend.handlers.s3.upload_image_project
-    events:
-      - http:
-          path: /api/v1/uploadImageProject/{fileName}
-          method: post
-  uploadFileProduct:
-    handler: backend.handlers.s3.upload_3dmodel_product
-    events:
-      - http:
-          path: /api/v1/uploadImageProduct/{fileName}
-          method: post
-  uploadFileProject:
-    handler: backend.handlers.s3.upload_3dmodel_project
-    events:
-      - http:
-          path: /api/v1/uploadImageProject/{fileName}
-          method: post
-  getUrlFile:
-    handler: backend.handlers.s3.get_url_file
-    events:
-      - http:
-          path: /api/v1/getUrlFile/{key}
-          method: get
   deleteFile:
     handler: backend.handlers.s3.delete_file
     events:
       - http:
-          path: /api/v1/deleteFile/{key}
+          path: /api/v1/deleteFile
           method: delete
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
