@@ -43,7 +43,7 @@ def test_user_register():
     password = "banana123"
     permissions = ["create:product", "delete:product", "update:product"]
 
-    event = {"headers": {"Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6dXNlciIsImNyZWF0ZTp1c2VyIl19.-lF5dmarBO2aQLdY9AgW4mtB8_3c_hMplSUfowhTmMU", "Content-Type": "application/json"},
+    event = {"headers": {"Authorization": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwb3JvbGFjMjE0QGJ1bGtieWUuY29tIiwiZXhwIjoxNjE5Nzk2NDE2LCJpZCI6IjYwM2FiOGZiNGRkMDZkNDM0MDQxYWI1NyIsIm5hbWUiOiJTYXltb24gVHJldmlzbzEiLCJwZXJtaXNzaW9ucyI6WyJURVNUOlNlcnZlcmxlc3MiXX0.GazFGRoEPU-Ck56Wjs7CqIPo1Kh3OdonXCzzAiQmK_A", "Content-Type": "application/json"},
              "body": {"name": name, "email": email, "password": password, "permissions": permissions}}
 
     res = register(event, None)

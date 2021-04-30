@@ -2,7 +2,10 @@ import json
 
 from ..services.s3 import S3
 from ..config.s3config import s3config
-from ..util import lambda_method
+from ..util import lambda_method, lambda_method_custom, auth
+from ..env import DELETEPRODUCT
+
+# pylint: disable=no-value-for-parameter
 
 
 @lambda_method
@@ -17,9 +20,10 @@ def upload_file(event, context, **kwargs):
     return upload_image
 
 
-@lambda_method
+@auth(DELETEPRODUCT)
+@lambda_method_custom
 def delete_file(event, context, **kwargs):
-    body = json.loads(event["body"])
+    body = event["body"]
 
     s3 = S3(s3config.buckets.upload_bucket,
             s3config.REGION_NAME, s3config.limits_file_size)

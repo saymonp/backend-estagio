@@ -18,9 +18,10 @@ def respond(body, code=200):
     return {
         'statusCode': code,
         'headers': {
+            'Access-Control-Allow-Headers': 'Accept',
             'Access-Control-Allow-Origin': '*',  # Required for CORS support to work
             # Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials': True,
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
         },
         'body': json.dumps(body, default=str),
     }
@@ -58,6 +59,12 @@ def respond_custom(body, code=None):
     if code:
         return {
             'statusCode': code,
+            'headers': {
+            'Access-Control-Allow-Headers': 'Accept',
+            'Access-Control-Allow-Origin': '*',  # Required for CORS support to work
+            # Required for cookies, authorization headers with HTTPS
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
+        },
             'body': body
         }
     return body
@@ -103,15 +110,15 @@ def auth(f: Callable, permission: str):
     """
     def aux(*xs, **kws):
         auth_token = xs[0].get("headers")["Authorization"]
-
+       
         if not auth_token:
-            raise Exception('Unauthorized')
+            raise Exception(f'Unauthorized: Missing Token {auth_token}')
 
         token_method, auth_token = auth_token.split(' ')
 
         if not auth_token or token_method.lower() != 'bearer':
             print("Failing due to invalid token_method or missing auth_token")
-            raise Exception('Unauthorized')
+            raise Exception('Unauthorized: invalid token_method or missing auth_token')
 
         try:
             payload = jwt.decode(auth_token, JWT_SECRET, algorithms="HS256")
@@ -119,11 +126,11 @@ def auth(f: Callable, permission: str):
             permissions = payload["permissions"]
 
             if permission not in permissions:
-                raise Exception('Unauthorized')
+                raise Exception('Unauthorized: Permission denied')
 
             return f(payload=payload, *xs, **kws)
         except Exception as e:
             print(f'Exception encountered: {e}')
-            raise Exception('Unauthorized')
+            raise Exception(f'Unauthorized: {e}')
 
     return aux
