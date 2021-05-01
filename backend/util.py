@@ -8,6 +8,8 @@ from collections import namedtuple
 from .errors import AppError
 from .env import JWT_SECRET
 
+def e404():
+    raise AppError("Invalid data").set_code(404)
 
 def dict_to_namedtuple(typename, data):
     return namedtuple(typename, data.keys())(

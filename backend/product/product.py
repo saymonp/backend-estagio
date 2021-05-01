@@ -12,13 +12,12 @@ from ..env import JWT_SECRET
 from backend.errors import AppError
 
 
-class User(object):
+class Product(object):
 
     def __init__(self):
         pass
 
-    def create(self):
-        # send email
+    def create(self, product, user_id):
         ...
 
     def update(self):
@@ -29,7 +28,7 @@ class User(object):
         # Deletar e deletar files
         ...
     
-    def orders_list(self):
+    def products_list(self):
         # Listagem
         ...
         
