@@ -145,6 +145,68 @@ functions:
       - http:
           path: /api/v1/deleteFile
           method: delete
+  # Orders
+  createOrder:
+    handler: backend.handlers.orders.create
+    events:
+      - http:
+          path: /api/v1/createOrder
+          method: post
+  updateOrder:
+    handler: backend.handlers.orders.update
+    events:
+      - http:
+          path: /api/v1/updateOrder
+          method: patch
+  deleteOrder:
+    handler: backend.handlers.orders.delete
+    events:
+      - http:
+          path: /api/v1/deleteOrder/{id}
+          method: delete
+  showOrder:
+    handler: backend.handlers.orders.show
+    events:
+      - http:
+          path: /api/v1/deleteOrder/{id}
+          method: get
+  listOrders:
+    handler: backend.handlers.orders.orders_list
+    events:
+      - http:
+          path: /api/v1/listOrders
+          method: get
+  # Products
+  createProduct:
+    handler: backend.handlers.products.create
+    events:
+      - http:
+          path: /api/v1/createProduct
+          method: post
+  updateProduct:
+    handler: backend.handlers.products.update
+    events:
+      - http:
+          path: /api/v1/updateProduct
+          method: post
+  deleteProduct:
+    handler: backend.handlers.products.delete
+    events:
+      - http:
+          path: /api/v1/deleteProduct/{id}
+          method: delete
+  showProduct:
+    handler: backend.handlers.products.show
+    events:
+      - http:
+          path: /api/v1/showProduct/{id}
+          method: get
+  listProducts:
+    handler: backend.handlers.products.products_list
+    events:
+      - http:
+          path: /api/v1/listProducts
+          method: get
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

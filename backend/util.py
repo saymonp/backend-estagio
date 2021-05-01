@@ -8,6 +8,20 @@ from collections import namedtuple
 from .errors import AppError
 from .env import JWT_SECRET
 
+def required(param, instance):
+    if isinstance(param, instance): 
+
+        return param
+    else: 
+        raise AppError("Invalid data").set_code(404)
+
+def optional(param, instance):
+    if isinstance(param, instance): 
+        
+        return param
+    else: 
+        return None
+
 def e404():
     raise AppError("Invalid data").set_code(404)
 

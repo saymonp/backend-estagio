@@ -7,17 +7,17 @@ from backend.services.mongo import db
 
 def test_order_create():
     order_data = {
-            "title": "Orçamento",
-            "status": "Pendente",
-            "name": "client_name",
-            "email": "client_email",
-            "clientPhone": "client_phone",
-            "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "notes": "notes if notes else None",
-            "quoteOrder": True,
-            "date": datetime.utcnow()
-            }
+        "title": "Orçamento",
+        "status": "Pendente",
+        "name": "client_name",
+        "email": "client_email",
+        "clientPhone": "client_phone",
+        "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "notes": "notes if notes else None",
+        "quoteOrder": True,
+        "createdAt": datetime.utcnow()
+    }
 
     order = Order()
 
@@ -29,24 +29,24 @@ def test_order_create():
 
 def test_order_delete():
     order_data = {
-            "title": "Orçamento",
-            "status": "Pendente",
-            "name": "client_name",
-            "email": "client_email",
-            "clientPhone": "client_phone",
-            "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "files": [],
-            "images": [],
-            "notes": "notes if notes else None",
-            "quoteOrder": False,
-            "date": datetime.utcnow()
-            }
+        "title": "Orçamento",
+        "status": "Pendente",
+        "name": "client_name",
+        "email": "client_email",
+        "clientPhone": "client_phone",
+        "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "files": [],
+        "images": [],
+        "notes": "notes if notes else None",
+        "quoteOrder": False,
+        "createdAt": datetime.utcnow()
+    }
 
     order = Order()
 
     order_created = order.create(order_data)
-    
+
     id = order_created["order_created"]
 
     response = order.delete(str(id))
@@ -59,23 +59,22 @@ def test_order_list():
 
     response = order.orders_list()
 
-    test = "order_created" in response
-    
     assert response["orders"] is not None
+
 
 def test_order_show():
     order_data = {
-            "title": "Orçamento",
-            "status": "Pendente",
-            "name": "client_name",
-            "email": "client_email",
-            "clientPhone": "client_phone",
-            "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "notes": "notes if notes else None",
-            "quoteOrder": True,
-            "date": datetime.utcnow()
-            }
+        "title": "Orçamento",
+        "status": "Pendente",
+        "name": "client_name",
+        "email": "client_email",
+        "clientPhone": "client_phone",
+        "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "notes": "notes if notes else None",
+        "quoteOrder": True,
+        "createdAt": datetime.utcnow()
+    }
 
     order = Order()
 
@@ -84,22 +83,23 @@ def test_order_show():
     response = order.show(response["order_created"])
     print(response)
     test = "order" in response
-    
+
     assert test is not None
+
 
 def test_order_update():
     order_data = {
-            "title": "Orçamento",
-            "status": "Pendente",
-            "name": "client_name",
-            "email": "client_email",
-            "clientPhone": "client_phone",
-            "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-            "notes": "notes if notes else None",
-            "quoteOrder": True,
-            "date": datetime.utcnow()
-            }
+        "title": "Orçamento",
+        "status": "Pendente",
+        "name": "client_name",
+        "email": "client_email",
+        "clientPhone": "client_phone",
+        "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "notes": "notes if notes else None",
+        "quoteOrder": True,
+        "createdAt": datetime.utcnow()
+    }
 
     order = Order()
 
@@ -109,4 +109,4 @@ def test_order_update():
 
     response = order.update(id, "Concluído")
 
-    assert response == { "msg": "order_updated" }
+    assert response == {"msg": "order_updated"}
