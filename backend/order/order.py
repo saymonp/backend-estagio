@@ -43,10 +43,10 @@ class Order(object):
                 "cep": order["cep"],
                 "deliverPrice": order["deliverPrice"],
                 "deliverMetod": order["deliverMetod"],
-                "productId": order["productId"],
+                "_productId": ObjectId(order["_productId"]),
                 "amount": order["amount"],
                 "quoteOrder": order["quoteOrder"],
-                "createdAt": datetime.datetime.utcnow()
+                "createdAt": datetime.utcnow()
             })
 
             return {"order_created": inserted_order.inserted_id}
@@ -84,6 +84,47 @@ class Order(object):
         return {"orders": orders}
 
     def show(self, id: str):
-        order = db.orders.find_one({"_id": ObjectId(id)})
+        # order = db.orders.find_one({"_id": ObjectId(id)})
 
-        return {"order": order}
+        order = db.orders.aggregate([
+            {
+                "$match": {
+                    "_id": ObjectId(id)
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "products",
+                    "localField": "_productId",
+                    "foreignField": "_id",
+                    "as": "productFiles"
+                }
+            },
+            {
+                "$project": {
+                    "title": 1,
+                    "status": 1,
+                    "clientName": 1,
+                    "clientEmail": 1,
+                    "clientPhone": 1,
+                    "cep": 1,
+                    "deliverPrice": 1,
+                    "deliverMetod": 1,
+                    "_productId": 1,
+                    "amount": 1,
+                    "quoteOrder": 1,
+                    "createdAt": 1,
+                    "files": 1,
+                    "images": 1,
+                    "notes": 1,
+                    "productFiles": {
+                        "files": 1,
+                        "images": 1
+                    }
+                },
+
+            },
+
+        ])
+
+        return {"order": [o for o in order]}

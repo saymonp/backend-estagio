@@ -9,8 +9,8 @@ def test_order_create():
     order_data = {
         "title": "Orçamento",
         "status": "Pendente",
-        "name": "client_name",
-        "email": "client_email",
+        "clientName": "client_name",
+        "clientEmail": "client_email",
         "clientPhone": "client_phone",
         "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
         "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
@@ -31,8 +31,8 @@ def test_order_delete():
     order_data = {
         "title": "Orçamento",
         "status": "Pendente",
-        "name": "client_name",
-        "email": "client_email",
+        "clientName": "client_name",
+        "clientEmail": "client_email",
         "clientPhone": "client_phone",
         "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
         "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
@@ -66,13 +66,16 @@ def test_order_show():
     order_data = {
         "title": "Orçamento",
         "status": "Pendente",
-        "name": "client_name",
-        "email": "client_email",
+        "clientName": "client_name",
+        "clientEmail": "client_email",
         "clientPhone": "client_phone",
-        "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-        "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "cep": "98700000",
+        "deliverPrice": 12.21,
+        "amount": 1,
+        "deliverMetod": 1,
         "notes": "notes if notes else None",
-        "quoteOrder": True,
+        "_productId": "608ce08a32a9c32438f4a7f4",
+        "quoteOrder": False,
         "createdAt": datetime.utcnow()
     }
 

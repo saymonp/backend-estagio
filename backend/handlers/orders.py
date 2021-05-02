@@ -66,7 +66,7 @@ def create(event, context, **kwargs):
             "cep": required(body["clientName"], str),
             "deliverPrice": required(body["clientName"], float),
             "deliverMetod": required(body["clientName"], str),
-            "productId": required(body["clientName"], str),
+            "_productId": required(body["clientName"], str),
             "amount": required(body["clientName"], int),
             "quoteOrder": required(body["clientName"], bool),
         }
