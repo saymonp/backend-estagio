@@ -85,66 +85,77 @@ functions:
       - http:
           path: /api/v1/deleteUser
           method: delete
+          cors: true
   updatePermissions:
     handler: backend.handlers.users.update_permissions
     events:
       - http:
           path: /api/v1/updatePermissions
           method: post
+          cors: true
   register:
     handler: backend.handlers.users.register
     events:
       - http:
           path: /api/v1/register
           method: post
+          cors: true
   login:
     handler: backend.handlers.users.login
     events:
       - http:
           path: /api/v1/login
           method: post
+          cors: true
   emailConfirmation:
     handler: backend.handlers.users.email_confirmation
     events:
       - http:
           path: /api/v1/emailConfirmation
           method: post
+          cors: true
   requestPasswordReset:
     handler: backend.handlers.users.request_password_reset
     events:
       - http:
           path: /api/v1/requestPasswordReset
           method: post
+          cors: true
   passwordReset:
     handler: backend.handlers.users.password_reset
     events:
       - http:
           path: /api/v1/passwordReset
           method: post
+          cors: true
   listUsers:
     handler: backend.handlers.users.list_users
     events:
       - http:
           path: /api/v1/listUsers
           method: get
+          cors: true
   sendEmail:
     handler: backend.handlers.contact_email.send_contact_email
     events:
       - http:
           path: /api/v1/sendContactEmail
           method: post
+          cors: true
   uploadFile:
     handler: backend.handlers.s3.upload_file
     events:
       - http:
           path: /api/v1/uploadFile
           method: post
+          cors: true
   deleteFile:
     handler: backend.handlers.s3.delete_file
     events:
       - http:
           path: /api/v1/deleteFile
           method: delete
+          cors: true
   # Orders
   createOrder:
     handler: backend.handlers.orders.create
@@ -152,30 +163,35 @@ functions:
       - http:
           path: /api/v1/createOrder
           method: post
+          cors: true
   updateOrder:
     handler: backend.handlers.orders.update
     events:
       - http:
           path: /api/v1/updateOrder
           method: patch
+          cors: true
   deleteOrder:
     handler: backend.handlers.orders.delete
     events:
       - http:
           path: /api/v1/deleteOrder/{id}
           method: delete
+          cors: true
   showOrder:
     handler: backend.handlers.orders.show
     events:
       - http:
           path: /api/v1/deleteOrder/{id}
           method: get
+          cors: true
   listOrders:
     handler: backend.handlers.orders.orders_list
     events:
       - http:
           path: /api/v1/listOrders
           method: get
+          cors: true
   # Products
   createProduct:
     handler: backend.handlers.products.create
@@ -183,30 +199,35 @@ functions:
       - http:
           path: /api/v1/createProduct
           method: post
+          cors: true
   updateProduct:
     handler: backend.handlers.products.update
     events:
       - http:
           path: /api/v1/updateProduct
           method: post
+          cors: true
   deleteProduct:
     handler: backend.handlers.products.delete
     events:
       - http:
           path: /api/v1/deleteProduct/{id}
           method: delete
+          cors: true
   showProduct:
     handler: backend.handlers.products.show
     events:
       - http:
           path: /api/v1/showProduct/{id}
           method: get
+          cors: true
   listProducts:
     handler: backend.handlers.products.products_list
     events:
       - http:
           path: /api/v1/listProducts
           method: get
+          cors: true
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

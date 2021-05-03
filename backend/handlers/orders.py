@@ -13,9 +13,9 @@ from ..env import DELETEPRODUCT, UPDATEPRODUCT, CREATEPRODUCT
 @auth(DELETEPRODUCT)
 @lambda_method_custom
 def delete(event, context, **kwargs):
-    body = event["body"]
-
-    id = required(body["id"], str)
+    pp = event["params"]["path"]
+    
+    id = required(pp["id"], str)
 
     order = Order()
     response = order.delete(id)
