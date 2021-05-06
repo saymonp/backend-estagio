@@ -1,25 +1,28 @@
 import json
-from ..util import lambda_method
+from ..util import lambda_method, required
 from ..errors import AppError
 from backend.mail.mail import Mail
 
 
 @lambda_method
 def send_contact_email(event, context):
-    body = json.loads(event["body"])
+    try:
+        body = json.loads(event["body"])
 
-    email = Mail()
+        client_first_name = required(body["clientFirstName"], str)
+        client_last_name = required(body["clientLastName"], str)
+        client_email = required(body["clientEmail"], str)
+        subject = required(body["subject"], str)
+        message = required(body["message"], str)
 
-    client_first_name = body["clientFirstName"]
-    client_last_name = body["clientLastName"]
-    client_email = body["clientEmail"]
+        email = Mail()
 
-    to = email.user_server
-    subject = body["subject"]
-    message = body["message"]
+        to = email.user_server
 
-    reply_to = f"{client_first_name} {client_last_name} <{client_email}>"
+        reply_to = f"{client_first_name} {client_last_name} <{client_email}>"
 
-    email.send_email(to, reply_to, subject, message)
+        email.send_email(to, reply_to, subject, message)
 
-    return {"ok": "Email sent"}
+        return {"ok": "Email sent"}
+    except Exception as e:
+        raise AppError(e).set_code(404)

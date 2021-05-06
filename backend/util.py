@@ -8,27 +8,32 @@ from collections import namedtuple
 from .errors import AppError
 from .env import JWT_SECRET
 
+
 def required(param, instance):
-    if isinstance(param, instance): 
+    if isinstance(param, instance):
 
         return param
-    else: 
+    else:
         raise AppError("Invalid data").set_code(404)
 
+
 def optional(param, instance):
-    if isinstance(param, instance): 
-        
+    if isinstance(param, instance):
+
         return param
-    else: 
+    else:
         return None
+
 
 def e404():
     raise AppError("Invalid data").set_code(404)
+
 
 def dict_to_namedtuple(typename, data):
     return namedtuple(typename, data.keys())(
         *(dict_to_namedtuple(typename + '_' + k, v) if isinstance(v, dict) else v for k, v in data.items())
     )
+
 
 def respond(body, code=200):
     return {
@@ -76,11 +81,11 @@ def respond_custom(body, code=None):
         return {
             'statusCode': code,
             'headers': {
-            'Access-Control-Allow-Headers': 'Accept',
-            'Access-Control-Allow-Origin': '*',  # Required for CORS support to work
-            # Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
-        },
+                'Access-Control-Allow-Headers': 'Accept',
+                'Access-Control-Allow-Origin': '*',  # Required for CORS support to work
+                # Required for cookies, authorization headers with HTTPS
+                'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
+            },
             'body': body
         }
     return body
@@ -126,15 +131,16 @@ def auth(f: Callable, permission: str):
     """
     def aux(*xs, **kws):
         auth_token = xs[0].get("headers")["Authorization"]
-       
+
         if not auth_token:
-            raise Exception(f'Unauthorized: Missing Token {auth_token}')
+            raise AppError(f'Unauthorized: Missing Token {auth_token}')
 
         token_method, auth_token = auth_token.split(' ')
 
         if not auth_token or token_method.lower() != 'bearer':
             print("Failing due to invalid token_method or missing auth_token")
-            raise Exception('Unauthorized: invalid token_method or missing auth_token')
+            raise AppError(
+                'Unauthorized: invalid token_method or missing auth_token')
 
         try:
             payload = jwt.decode(auth_token, JWT_SECRET, algorithms="HS256")
@@ -142,11 +148,11 @@ def auth(f: Callable, permission: str):
             permissions = payload["permissions"]
 
             if permission not in permissions:
-                raise Exception('Unauthorized: Permission denied')
+                raise AppError('Unauthorized: Permission denied')
 
             return f(payload=payload, *xs, **kws)
         except Exception as e:
             print(f'Exception encountered: {e}')
-            raise Exception(f'Unauthorized: {e}')
+            raise AppError(f'Unauthorized: {e}')
 
     return aux

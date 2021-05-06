@@ -2,11 +2,9 @@ import json
 
 from ..user.user import User
 
-from ..util import lambda_method, lambda_method_custom, auth
-from ..errors import AppError
+from ..util import lambda_method, lambda_method_custom, auth, required, optional
 from ..env import DELETEUSER, UPDATEUSER, CREATEUSER
-
-import bcrypt
+from ..errors import AppError
 
 # pylint: disable=no-value-for-parameter
 
@@ -16,8 +14,11 @@ import bcrypt
 def delete(event, context, **kwargs):
     body = event["body"]
 
+    user_id = required(body["id"], str)
+    email = required(body["email"], str)
+
     u = User()
-    u.delete(body["id"], body["email"])
+    u.delete(user_id, email)
 
     return {"deleted user": body["id"]}
 
@@ -27,8 +28,11 @@ def delete(event, context, **kwargs):
 def update_permissions(event, context, **kwargs):
     body = event["body"]
 
+    user_id = required(body["id"], str)
+    permissions = required(body["permissions"], list)
+
     u = User()
-    response = u.update_permissions(body["id"], body["permissions"])
+    response = u.update_permissions(user_id, permissions)
 
     return response
 
@@ -39,58 +43,85 @@ def register(event, context, **kwargs):
 
     body = event["body"]
 
+    name = required(body["name"], str)
+    email = required(body["email"], str)
+    password = required(body["password"], str)
+    permissions = optional(body["permissions"], list)
+
     u = User()
-    response = u.register(body["name"], body["email"], body["password"],
-                          permissions=body["permissions"] if "permissions" in body else None)
+    response = u.register(name, email, password, permissions=permissions)
 
     return {"msg": response["msg"], "_id": str(response["_id"]) if "_id" in response else None}
 
 
 @lambda_method
 def login(event, context, **kwargs):
-    body = json.loads(event["body"])
+    try:
+        body = json.loads(event["body"])
 
-    u = User()
-    user = u.login(body["email"], body["password"])
+        email = required(body["email"], str)
+        password = required(body["password"], str)
 
-    return {"user": user}
+        u = User()
+        user = u.login(email, password)
+
+        return {"user": user}
+    except Exception as e:
+        raise AppError(e).set_code(404)
 
 
 @lambda_method
 def email_confirmation(event, context, **kwargs):
-    body = json.loads(event["body"])
+    try:
+        body = json.loads(event["body"])
 
-    u = User()
-    response = u.email_confirmation(body["confirmationToken"])
+        confirmation_token = required(body["confirmationToken"], str)
 
-    return response
+        u = User()
+        response = u.email_confirmation(confirmation_token)
+
+        return response
+    except Exception as e:
+        raise AppError(e).set_code(404)
 
 
 @lambda_method
 def request_password_reset(event, context, **kwargs):
+    try:
+        body = json.loads(event["body"])
 
-    body = json.loads(event["body"])
+        email = required(body["email"], str)
 
-    u = User()
-    response = u.request_password_reset(body["email"])
+        u = User()
+        response = u.request_password_reset(email)
 
-    return response
+        return response
+    except Exception as e:
+        raise AppError(e).set_code(404)
 
 
 @lambda_method
 def password_reset(event, context, **kwargs):
-    body = json.loads(event["body"])
+    try:
+        body = json.loads(event["body"])
 
-    u = User()
-    response = u.password_reset(
-        body["newPassword"], body["passwordResetToken"])
+        new_password = required(body["newPassword"], str)
+        password_reset_token = required(body["passwordResetToken"], str)
 
-    return response
+        u = User()
+        response = u.password_reset(new_password, password_reset_token)
+
+        return response
+    except Exception as e:
+        raise AppError(e).set_code(404)
 
 
 @lambda_method
 def list_users(event, context, **kwargs):
-    u = User()
-    response = u.list_users()
+    try:
+        u = User()
+        response = u.list_users()
 
-    return response
+        return response
+    except Exception as e:
+        raise AppError(e).set_code(404)

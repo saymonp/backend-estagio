@@ -75,7 +75,7 @@ class User(object):
                 "name": name,
                 "email": email,
                 "password": bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt()),
-                "permissions": permissions,
+                "permissions": permissions if permissions else [],
                 "isVerified": False,
             })
 

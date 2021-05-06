@@ -27,6 +27,7 @@ class Order(object):
                 "images": order["images"],
                 "notes": order["notes"],
                 "quoteOrder": order["quoteOrder"],
+                "allowContact": order["allowContact"],
                 "createdAt": datetime.utcnow()
             })
 
@@ -46,6 +47,7 @@ class Order(object):
                 "_productId": ObjectId(order["_productId"]),
                 "amount": order["amount"],
                 "quoteOrder": order["quoteOrder"],
+                "allowContact": order["allowContact"],
                 "createdAt": datetime.utcnow()
             })
 

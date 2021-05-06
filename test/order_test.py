@@ -16,6 +16,7 @@ def test_order_create():
         "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
         "notes": "notes if notes else None",
         "quoteOrder": True,
+        "allowContact": True,
         "createdAt": datetime.utcnow()
     }
 
@@ -40,6 +41,7 @@ def test_order_delete():
         "images": [],
         "notes": "notes if notes else None",
         "quoteOrder": False,
+        "allowContact": True,
         "createdAt": datetime.utcnow()
     }
 
@@ -76,6 +78,7 @@ def test_order_show():
         "notes": "notes if notes else None",
         "_productId": "608ce08a32a9c32438f4a7f4",
         "quoteOrder": False,
+        "allowContact": True,
         "createdAt": datetime.utcnow()
     }
 
@@ -101,6 +104,7 @@ def test_order_update():
         "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
         "notes": "notes if notes else None",
         "quoteOrder": True,
+        "allowContact": True,
         "createdAt": datetime.utcnow()
     }
 
