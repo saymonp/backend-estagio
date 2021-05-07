@@ -15,7 +15,7 @@ def upload_file(event, context, **kwargs):
     body = json.loads(event["body"])
 
     data = required(body["data"], str)
-    file_name = required(body["file_name"], str)
+    file_name = required(body["fileName"], str)
     path = required(body["path"], str)
 
     s3 = S3(s3config.buckets.upload_bucket,
