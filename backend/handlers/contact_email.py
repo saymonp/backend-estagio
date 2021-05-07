@@ -6,23 +6,21 @@ from backend.mail.mail import Mail
 
 @lambda_method
 def send_contact_email(event, context):
-    try:
-        body = json.loads(event["body"])
 
-        client_first_name = required(body["clientFirstName"], str)
-        client_last_name = required(body["clientLastName"], str)
-        client_email = required(body["clientEmail"], str)
-        subject = required(body["subject"], str)
-        message = required(body["message"], str)
+    body = json.loads(event["body"])
 
-        email = Mail()
+    client_first_name = required(body["clientFirstName"], str)
+    client_last_name = required(body["clientLastName"], str)
+    client_email = required(body["clientEmail"], str)
+    subject = required(body["subject"], str)
+    message = required(body["message"], str)
 
-        to = email.user_server
+    email = Mail()
 
-        reply_to = f"{client_first_name} {client_last_name} <{client_email}>"
+    to = email.user_server
 
-        email.send_email(to, reply_to, subject, message)
+    reply_to = f"{client_first_name} {client_last_name} <{client_email}>"
 
-        return {"ok": "Email sent"}
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    email.send_email(to, reply_to, subject, message)
+
+    return {"ok": "Email sent"}

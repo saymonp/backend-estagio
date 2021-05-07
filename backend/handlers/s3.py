@@ -11,36 +11,32 @@ from ..errors import AppError
 
 @lambda_method
 def upload_file(event, context, **kwargs):
-    try:
-        body = json.loads(event["body"])
 
-        data = required(body["data"], str)
-        file_name = required(body["data"], str)
-        path = required(body["path"], str)
+    body = json.loads(event["body"])
 
-        s3 = S3(s3config.buckets.upload_bucket,
-                s3config.REGION_NAME, s3config.limits_file_size)
+    data = required(body["data"], str)
+    file_name = required(body["data"], str)
+    path = required(body["path"], str)
 
-        upload_image = s3.upload(data, file_name, path)
+    s3 = S3(s3config.buckets.upload_bucket,
+            s3config.REGION_NAME, s3config.limits_file_size)
 
-        return upload_image
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    upload_image = s3.upload(data, file_name, path)
+
+    return upload_image
 
 
 @auth(DELETEPRODUCT)
 @lambda_method_custom
 def delete_file(event, context, **kwargs):
-    try:
-        body = event["body"]
 
-        key = required(body["key"], str)
+    body = event["body"]
 
-        s3 = S3(s3config.buckets.upload_bucket,
-                s3config.REGION_NAME, s3config.limits_file_size)
+    key = required(body["key"], str)
 
-        deleted_file = s3.delete(body["key"])
+    s3 = S3(s3config.buckets.upload_bucket,
+            s3config.REGION_NAME, s3config.limits_file_size)
 
-        return deleted_file
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    deleted_file = s3.delete(body["key"])
+
+    return deleted_file

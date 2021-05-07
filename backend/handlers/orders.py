@@ -1,107 +1,109 @@
+import json
+from bson.json_util import dumps
+
 from ..order.order import Order
 
 from ..util import lambda_method, lambda_method_custom, auth, required, optional
 from ..env import DELETEPRODUCT, UPDATEPRODUCT, CREATEPRODUCT
 from ..errors import AppError
+from json.encoder import JSONEncoder
 
 # pylint: disable=no-value-for-parameter
 
 
-@auth(DELETEPRODUCT)
+@auth(None)
 @lambda_method_custom
 def delete(event, context, **kwargs):
-    try:
-        pp = event["params"]["path"]
-        
-        order_id = required(pp["id"], str)
 
-        order = Order()
-        response = order.delete(order_id)
+    pp = event["params"]["path"]
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    order_id = required(pp["id"], str)
+
+    order = Order()
+    response = order.delete(order_id)
+
+    return response
 
 
-@auth(UPDATEPRODUCT)
+@auth(None)
 @lambda_method_custom
 def update(event, context, **kwargs):
-    try:
-        body = event["body"]
 
-        status = required(body["status"], str)
+    body = event["body"]
 
-        order = Order()
-        response = order.update(status)
+    status = required(body["status"], str)
+    order_id = required(body["id"], str)
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    order = Order()
+    response = order.update(order_id, status)
+
+    return response
 
 
-@auth(CREATEPRODUCT)
-@lambda_method_custom
+@lambda_method
 def create(event, context, **kwargs):
-    try:
-        body = event["body"]
 
-        if body["quoteOrder"] == True:
+    body = json.loads(event["body"])
 
-            order = {
-                "clientName": required(body["clientName"], str),
-                "clientEmail": required(body["clientName"], str),
-                "clientPhone": required(body["clientName"], str),
-                "files": optional(body["clientName"], list),
-                "images": optional(body["clientName"], list),
-                "notes": optional(body["clientName"], str),
-                "allowContact": required(body["allowContact"], str),
-                "quoteOrder": required(body["clientName"], str),
-            }
+    if body["quoteOrder"] == True:
 
-        elif body["quoteOrder"] == False:
-            order = {
-                "title": required(body["clientName"], str),
-                "clientName": required(body["clientName"], str),
-                "clientEmail": required(body["clientName"], str),
-                "clientPhone": required(body["clientName"], str),
-                "cep": required(body["clientName"], str),
-                "deliverPrice": required(body["clientName"], float),
-                "deliverMetod": required(body["clientName"], str),
-                "_productId": required(body["clientName"], str),
-                "amount": required(body["clientName"], int),
-                "allowContact": required(body["allowContact"], str),
-                "quoteOrder": required(body["clientName"], bool),
-            }
+        order_data = {
+            "clientName": required(body["clientName"], str),
+            "clientEmail": required(body["clientEmail"], str),
+            "clientPhone": required(body["clientPhone"], str),
+            "files": optional(body["files"], list),
+            "images": optional(body["images"], list),
+            "notes": optional(body["notes"], str),
+            "allowContact": required(body["allowContact"], bool),
+            "quoteOrder": required(body["quoteOrder"], bool),
+        }
 
-        order = Order()
-        response = order.create(order)
+    elif body["quoteOrder"] == False:
+        order_data = {
+            "title": required(body["title"], str),
+            "clientName": required(body["clientName"], str),
+            "clientEmail": required(body["clientEmail"], str),
+            "clientPhone": required(body["clientPhone"], str),
+            "cep": required(body["cep"], str),
+            "deliverPrice": required(body["deliverPrice"], float),
+            "deliverMetod": required(body["deliverMetod"], str),
+            "productId": required(body["productId"], str),
+            "amount": required(body["amount"], int),
+            "allowContact": required(body["allowContact"], bool),
+            "quoteOrder": required(body["quoteOrder"], bool),
+        }
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    order = Order()
+    response = order.create(order_data)
+
+    return response
 
 
-@lambda_method
+@auth(None)
+@lambda_method_custom
 def show(event, context, **kwargs):
-    try:
-        pp = event['pathParameters']
+    pp = event["params"]["path"]
 
-        order_id = required(pp["id"], str)
+    order_id = required(pp["id"], str)
 
-        order = Order()
-        response = order.show(order_id)
+    order = Order()
+    response = order.show(order_id)["order"][0]
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    response["_id"] = str(response['_id'])
+
+    if "productId" in response:
+        response["productId"] = str(response["productId"])
+
+    return response
 
 
-@lambda_method
+@auth(None)
+@lambda_method_custom
 def orders_list(event, context, **kwargs):
-    try:
-        order = Order()
-        response = order.orders_list()
+    order = Order()
+    response = order.orders_list()
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    for o in response["orders"]:
+        o["_id"] = str(o["_id"])
+
+    return response

@@ -56,72 +56,62 @@ def register(event, context, **kwargs):
 
 @lambda_method
 def login(event, context, **kwargs):
-    try:
-        body = json.loads(event["body"])
 
-        email = required(body["email"], str)
-        password = required(body["password"], str)
+    body = json.loads(event["body"])
 
-        u = User()
-        user = u.login(email, password)
+    email = required(body["email"], str)
+    password = required(body["password"], str)
 
-        return {"user": user}
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    u = User()
+    user = u.login(email, password)
+
+    return {"user": user}
 
 
 @lambda_method
 def email_confirmation(event, context, **kwargs):
-    try:
-        body = json.loads(event["body"])
 
-        confirmation_token = required(body["confirmationToken"], str)
+    body = json.loads(event["body"])
 
-        u = User()
-        response = u.email_confirmation(confirmation_token)
+    confirmation_token = required(body["confirmationToken"], str)
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    u = User()
+    response = u.email_confirmation(confirmation_token)
+
+    return response
 
 
 @lambda_method
 def request_password_reset(event, context, **kwargs):
-    try:
-        body = json.loads(event["body"])
 
-        email = required(body["email"], str)
+    body = json.loads(event["body"])
 
-        u = User()
-        response = u.request_password_reset(email)
+    email = required(body["email"], str)
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    u = User()
+    response = u.request_password_reset(email)
+
+    return response
 
 
 @lambda_method
 def password_reset(event, context, **kwargs):
-    try:
-        body = json.loads(event["body"])
 
-        new_password = required(body["newPassword"], str)
-        password_reset_token = required(body["passwordResetToken"], str)
+    body = json.loads(event["body"])
 
-        u = User()
-        response = u.password_reset(new_password, password_reset_token)
+    new_password = required(body["newPassword"], str)
+    password_reset_token = required(body["passwordResetToken"], str)
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    u = User()
+    response = u.password_reset(new_password, password_reset_token)
+
+    return response
 
 
 @lambda_method
 def list_users(event, context, **kwargs):
-    try:
-        u = User()
-        response = u.list_users()
 
-        return response
-    except Exception as e:
-        raise AppError(e).set_code(404)
+    u = User()
+    response = u.list_users()
+
+    return response

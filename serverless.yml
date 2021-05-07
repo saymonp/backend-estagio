@@ -77,6 +77,9 @@ provider:
 #  exclude:
 #    - exclude-me.py
 #    - exclude-me-dir/**
+package:
+  exclude:
+    - test/**
 
 functions:
   deleteUser:
@@ -182,11 +185,11 @@ functions:
     handler: backend.handlers.orders.show
     events:
       - http:
-          path: /api/v1/deleteOrder/{id}
+          path: /api/v1/showOrder/{id}
           method: get
           cors: true
   listOrders:
-    handler: backend.handlers.orders.orders_list
+    handler: backend.handlers.orders_list
     events:
       - http:
           path: /api/v1/listOrders

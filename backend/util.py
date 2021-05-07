@@ -14,7 +14,7 @@ def required(param, instance):
 
         return param
     else:
-        raise AppError("Invalid data").set_code(404)
+        raise AppError("Invalid data").set_code(400)
 
 
 def optional(param, instance):
@@ -147,8 +147,9 @@ def auth(f: Callable, permission: str):
 
             permissions = payload["permissions"]
 
-            if permission not in permissions:
-                raise AppError('Unauthorized: Permission denied')
+            if permission:
+                if permission not in permissions:
+                    raise AppError('Unauthorized: Permission denied')
 
             return f(payload=payload, *xs, **kws)
         except Exception as e:

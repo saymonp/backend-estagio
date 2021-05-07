@@ -16,8 +16,7 @@ def test_order_create():
         "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
         "notes": "notes if notes else None",
         "quoteOrder": True,
-        "allowContact": True,
-        "createdAt": datetime.utcnow()
+        "allowContact": True
     }
 
     order = Order()
@@ -42,7 +41,6 @@ def test_order_delete():
         "notes": "notes if notes else None",
         "quoteOrder": False,
         "allowContact": True,
-        "createdAt": datetime.utcnow()
     }
 
     order = Order()
@@ -60,7 +58,7 @@ def test_order_list():
     order = Order()
 
     response = order.orders_list()
-
+    print(response)
     assert response["orders"] is not None
 
 
@@ -76,10 +74,9 @@ def test_order_show():
         "amount": 1,
         "deliverMetod": 1,
         "notes": "notes if notes else None",
-        "_productId": "608ce08a32a9c32438f4a7f4",
+        "productId": "608ce08a32a9c32438f4a7f4",
         "quoteOrder": False,
         "allowContact": True,
-        "createdAt": datetime.utcnow()
     }
 
     order = Order()
@@ -105,7 +102,6 @@ def test_order_update():
         "notes": "notes if notes else None",
         "quoteOrder": True,
         "allowContact": True,
-        "createdAt": datetime.utcnow()
     }
 
     order = Order()
