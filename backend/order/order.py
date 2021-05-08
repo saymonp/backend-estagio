@@ -80,7 +80,7 @@ class Order(object):
     def orders_list(self):
         orders = []
 
-        for x in db.orders.find({}, {"_id": 1, "title": 1, "clientName": 1, "clientPhone": 1, "status": 1}):
+        for x in db.orders.find({}, {"_id": 1, "title": 1, "clientName": 1, "clientEmail": 1, "clientPhone": 1, "status": 1, "createdAt": 1}):
             orders.append(x)
 
         return {"orders": orders}
@@ -97,9 +97,9 @@ class Order(object):
             {
                 "$lookup": {
                     "from": "products",
-                    "localField": "_productId",
+                    "localField": "productId",
                     "foreignField": "_id",
-                    "as": "productFiles"
+                    "as": "productData"
                 }
             },
             {
@@ -118,7 +118,11 @@ class Order(object):
                     "files": 1,
                     "images": 1,
                     "notes": 1,
-                    "productFiles": {
+                    "createdAt": 1,
+                    "productData": {
+                        "title": 1,
+                        "price": 1,
+                        "description": 1,
                         "files": 1,
                         "images": 1
                     }

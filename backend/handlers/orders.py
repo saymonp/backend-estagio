@@ -93,6 +93,7 @@ def show(event, context, **kwargs):
 
     if "productId" in response:
         response["productId"] = str(response["productId"])
+        response["createdAt"] = response["createdAt"].strftime("%m/%d/%Y, %H:%M:%S")
 
     return response
 
@@ -105,5 +106,6 @@ def orders_list(event, context, **kwargs):
 
     for o in response["orders"]:
         o["_id"] = str(o["_id"])
+        o["createdAt"] = o["createdAt"].strftime("%m/%d/%Y, %H:%M:%S")
 
     return response
