@@ -24,7 +24,7 @@ class S3(object):
         self.region = region
 
     def upload(self, file, object_name, path=None):
-        match = re.search("data:(\w+/\w+);base64,(.+)", file)
+        match = re.search("data:(.+/.+);base64,(.+)", file)
 
         mime = match.group(1)
         base64 = match.group(2)
