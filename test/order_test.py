@@ -72,7 +72,7 @@ def test_order_show():
         "cep": "98700000",
         "deliverPrice": 12.21,
         "amount": 1,
-        "deliverMetod": 1,
+        "deliverMethod": 1,
         "notes": "notes if notes else None",
         "productId": "608ce08a32a9c32438f4a7f4",
         "quoteOrder": False,
