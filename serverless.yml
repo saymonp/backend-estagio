@@ -145,6 +145,7 @@ functions:
           path: /api/v1/sendContactEmail
           method: post
           cors: true
+  # Upload
   uploadFile:
     handler: backend.handlers.s3.upload_file
     events:
@@ -158,6 +159,13 @@ functions:
       - http:
           path: /api/v1/deleteFile
           method: delete
+          cors: true
+  uploadPresignedUrl:
+    handler: backend.handlers.s3.upload_presigned_url
+    events:
+      - http:
+          path: /api/v1/uploadPresignedUrl/{path}/{fileName}
+          method: get
           cors: true
   # Orders
   createOrder:
