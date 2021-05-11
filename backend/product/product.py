@@ -3,6 +3,7 @@ from bson import ObjectId
 
 from ..services.mongo import db
 from ..services.s3 import S3
+from ..config.s3config import s3config
 
 
 class Product(object):
@@ -21,7 +22,7 @@ class Product(object):
             "orderAvailable": product["orderAvailable"],
             "description": product["description"],
             "images": product["images"],
-            "files": product["files"],
+            "files": product["files"] if product["files"] else [],
             "heightPacked": product["heightPacked"],
             "weightPacked": product["weightPacked"],
             "widthPacked": product["widthPacked"],
@@ -42,7 +43,7 @@ class Product(object):
             "orderAvailable": product["orderAvailable"],
             "description": product["description"],
             "images": product["images"],
-            "files": product["files"],
+            "files": product["files"] if product["files"] else [],
             "heightPacked": product["heightPacked"],
             "weightPacked": product["weightPacked"],
             "widthPacked": product["widthPacked"],
@@ -53,22 +54,23 @@ class Product(object):
         return {"msg": "product_updated"}
 
     def delete(self, id):
-        files = db.products.find_one({"_id": ObjectId(id)}, {
+        product = db.products.find_one({"_id": ObjectId(id)}, {
                                      "files": 1, "images": 1})
 
-        if files and files["files"]:
-            s3 = S3()
-            for f in files["images"]:
-                s3.delete(f.key)
+        if product and product["files"] or product["images"]:
+            s3 = S3(s3config.buckets.upload_bucket,
+                    s3config.REGION_NAME, s3config.limits_file_size)
+            if product["files"]:
+                for f in product["files"]:
+                    s3.delete(f["key"])
 
-        if files and files["images"]:
-            s3 = S3()
-            for img in files["images"]:
-                s3.delete(img.key)
+            if product["images"]:
+                for img in product["images"]:
+                    s3.delete(img["key"])
 
         db.products.delete_one({"_id": ObjectId(id)})
 
-        return {"msg": "Order deleted"}
+        return {"msg": "Product deleted"}
 
     def products_list(self):
         products = []

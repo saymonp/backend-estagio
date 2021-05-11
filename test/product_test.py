@@ -13,14 +13,13 @@ def test_product_create():
         "height": 1.2,
         "orderAvailable": True,
         "description": "product.....",
-        "images": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
-        "files": [{"key": "......", "url": "...."}, {"key": "......", "url": "...."}, {"key": "......", "url": "...."}],
+        "images": [{"key": "......", "file_url": "...."}, {"key": "......", "file_url": "...."}],
+        "files": [{"key": "......", "file_url": "...."}, {"key": "......", "file_url": "...."}, {"key": "......", "file_url": "...."}],
         "heightPacked": 1.2,
         "weightPacked": 1.2,
         "widthPacked": 1.2,
         "diameterPacked": 1.2,
         "formatPacked": 1,
-        "createdAt": datetime.utcnow()
     }
 
     product = Product()
@@ -48,7 +47,6 @@ def test_product_delete():
         "widthPacked": 1.2,
         "diameterPacked": 1.2,
         "formatPacked": 1,
-        "createdAt": datetime.utcnow()
     }
 
     product = Product()
@@ -87,7 +85,6 @@ def test_product_show():
         "widthPacked": 1.2,
         "diameterPacked": 1.2,
         "formatPacked": 1,
-        "createdAt": datetime.utcnow()
     }
 
     product = Product()
@@ -118,7 +115,6 @@ def test_product_update():
         "widthPacked": 1.2,
         "diameterPacked": 1.2,
         "formatPacked": 1,
-        "createdAt": datetime.utcnow()
     }
 
     product = Product()
@@ -144,7 +140,6 @@ def test_product_update():
         "widthPacked": 1.2,
         "diameterPacked": 1.2,
         "formatPacked": 1,
-        "createdAt": datetime.utcnow()
     }
 
     response = product.update(update_data, user_id)

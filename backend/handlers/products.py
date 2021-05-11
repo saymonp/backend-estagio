@@ -26,27 +26,27 @@ def delete(event, context, **kwargs):
 def update(event, context, **kwargs):
 
     body = event["body"]
-    user_id = kwargs["payload"]["sub"]
+    user_id = required(kwargs["payload"]["id"], str)
 
-    product = {
+    product_data = {
         "productId": required(body["productId"], str),
-        "title": required(body["clientName"], str),
-        "price": required(body["clientName"], float),
-        "width": required(body["clientName"], float),
-        "height": required(body["clientName"], float),
-        "orderAvailable": required(body["clientName"], bool),
-        "description": required(body["clientName"], str),
-        "images": required(body["clientName"], list),
-        "files": optional(body["clientName"], list),
-        "heightPacked": required(body["clientName"], float),
-        "weightPacked": required(body["clientName"], float),
-        "widthPacked": required(body["clientName"], float),
-        "diameterPacked": required(body["clientName"], float),
-        "formatPacked": required(body["clientName"], int),
+        "title": required(body["title"], str),
+        "price": required(body["price"], float),
+        "width": required(body["width"], float),
+        "height": required(body["height"], float),
+        "orderAvailable": required(body["orderAvailable"], bool),
+        "description": required(body["description"], str),
+        "images": required(body["images"], list),
+        "files": optional(body["files"], list),
+        "heightPacked": required(body["heightPacked"], float),
+        "weightPacked": required(body["weightPacked"], str),
+        "widthPacked": required(body["widthPacked"], float),
+        "diameterPacked": required(body["diameterPacked"], float),
+        "formatPacked": required(body["formatPacked"], int),
     }
 
     product = Product()
-    response = product.update(product, user_id)
+    response = product.update(product_data, user_id)
 
     return response
 
@@ -56,36 +56,36 @@ def update(event, context, **kwargs):
 def create(event, context, **kwargs):
 
     body = event["body"]
-    user_id = kwargs["payload"]["sub"]
+    user_id = required(kwargs["payload"]["id"], str)
 
     product_data = {
-        "title": required(body["clientName"], str),
-        "price": required(body["clientName"], float),
-        "width": required(body["clientName"], float),
-        "height": required(body["clientName"], float),
-        "orderAvailable": required(body["clientName"], bool),
-        "description": required(body["clientName"], str),
-        "images": required(body["clientName"], list),
-        "files": optional(body["clientName"], list),
-        "heightPacked": required(body["clientName"], float),
-        "weightPacked": required(body["clientName"], float),
-        "widthPacked": required(body["clientName"], float),
-        "diameterPacked": required(body["clientName"], float),
-        "formatPacked": required(body["clientName"], int),
+        "title": required(body["title"], str),
+        "price": required(body["price"], float),
+        "width": required(body["width"], float),
+        "height": required(body["height"], float),
+        "orderAvailable": required(body["orderAvailable"], bool),
+        "description": required(body["description"], str),
+        "images": required(body["images"], list),
+        "files": optional(body["files"], list),
+        "heightPacked": required(body["heightPacked"], float),
+        "weightPacked": required(body["weightPacked"], str),
+        "widthPacked": required(body["widthPacked"], float),
+        "diameterPacked": required(body["diameterPacked"], float),
+        "formatPacked": required(body["formatPacked"], int),
     }
 
     product = Product()
     response = product.create(product_data, user_id)
-
+    response["product_created"] = str(response["product_created"])
+    
     return response
-
 
 @lambda_method
 def show(event, context, **kwargs):
 
-    pp = event['pathParameters']
+    pp = event["pathParameters"]
 
-    product_id = required(pp["id"], str),
+    product_id = required(pp["id"], str)
 
     product = Product()
     response = product.show(product_id)

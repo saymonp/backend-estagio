@@ -44,16 +44,16 @@ def delete_file(event, context, **kwargs):
 
 @lambda_method
 def upload_presigned_url(event, context, **kwargs):
-        pp = event['pathParameters']
+    pp = event['pathParameters']
 
-        path = required(pp["path"], str)
-        file_name = required(pp["fileName"], str)
+    path = required(pp["path"], str)
+    file_name = required(pp["fileName"], str)
 
-        path = path.replace("%", "/")
+    path = path.replace("%", "/")
 
-        s3 = S3(s3config.buckets.upload_bucket,
+    s3 = S3(s3config.buckets.upload_bucket,
             s3config.REGION_NAME, s3config.limits_file_size)
 
-        response = s3.create_presigned_url(path, file_name)
+    response = s3.create_presigned_url(path, file_name)
 
-        return response
+    return response
