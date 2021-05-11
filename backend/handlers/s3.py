@@ -1,4 +1,5 @@
 import json
+from urllib.parse import unquote
 
 from ..services.s3 import S3
 from ..config.s3config import s3config
@@ -49,7 +50,7 @@ def upload_presigned_url(event, context, **kwargs):
     path = required(pp["path"], str)
     file_name = required(pp["fileName"], str)
 
-    path = path.replace("%", "/")
+    path = unquote(path)
 
     s3 = S3(s3config.buckets.upload_bucket,
             s3config.REGION_NAME, s3config.limits_file_size)
