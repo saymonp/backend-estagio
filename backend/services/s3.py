@@ -28,11 +28,10 @@ class S3(object):
 
         mime = match.group(1)
         base64 = match.group(2)
-        
 
         filedata = b64decode(base64)
 
-        size = getsizeof(filedata) 
+        size = getsizeof(filedata)
 
         if size > 30000000:
             raise AppError("Data to large").set_code(404)
@@ -59,3 +58,20 @@ class S3(object):
         url = f"https://{self.bucket}.s3.{self.region}.amazonaws.com/{key}"
 
         return {"file_url": url, "key": key}
+
+    def create_presigned_url(self, path, file_name):
+        s3_params = {
+            "acl": "public-read"
+        }
+        s3_cond = [
+            {"acl": "public-read"}
+        ]
+        
+        expiration = 60
+        object_name = f"{path}{uuid.uuid4()}{file_name}"
+
+        response = s3_client.generate_presigned_post(
+            self.bucket, object_name, Fields=s3_params, Conditions=s3_cond, ExpiresIn=expiration)
+        #response = s3_client.generate_presigned_post(self.bucket, object_name, Params=s3_params, ExpiresIn=expiration)
+
+        return response

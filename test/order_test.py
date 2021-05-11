@@ -81,9 +81,9 @@ def test_order_show():
 
     order = Order()
 
-    response = order.create(order_data)
+    #response = order.create(order_data)
 
-    response = order.show(response["order_created"])
+    response = order.show("6095a15f29899625237b93b0")
     print(response)
     test = "order" in response
 
