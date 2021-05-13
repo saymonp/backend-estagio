@@ -64,13 +64,15 @@ def create(event, context, **kwargs):
             "clientName": required(body["clientName"], str),
             "clientEmail": required(body["clientEmail"], str),
             "clientPhone": required(body["clientPhone"], str),
-            "cep": required(body["cep"], str),
-            "deliverPrice": required(body["deliverPrice"], float),
+            "deliverPrice": body["deliverPrice"],
             "deliverMethod": required(body["deliverMethod"], str),
             "productId": required(body["productId"], str),
             "amount": required(body["amount"], int),
             "allowContact": required(body["allowContact"], bool),
             "quoteOrder": required(body["quoteOrder"], bool),
+            "state": body["state"],
+            "cep": body["cep"],
+            "location": body["location"],
         }
 
     order = Order()

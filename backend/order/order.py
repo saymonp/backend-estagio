@@ -48,6 +48,8 @@ class Order(object):
                 "amount": order["amount"],
                 "quoteOrder": order["quoteOrder"],
                 "allowContact": order["allowContact"],
+                "location": order["location"],
+                "state": order["state"],
                 "createdAt": datetime.utcnow()
             })
 

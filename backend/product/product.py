@@ -28,6 +28,7 @@ class Product(object):
             "widthPacked": product["widthPacked"],
             "diameterPacked": product["diameterPacked"],
             "formatPacked": product["formatPacked"],
+            "lengthPacked": product["lengthPacked"],
             "createdAt": datetime.utcnow()
         })
 
@@ -49,6 +50,7 @@ class Product(object):
             "widthPacked": product["widthPacked"],
             "diameterPacked": product["diameterPacked"],
             "formatPacked": product["formatPacked"],
+            "lengthPacked": product["lengthPacked"],
             "createdAt": datetime.utcnow()}})
 
         return {"msg": "product_updated"}
@@ -75,7 +77,7 @@ class Product(object):
     def products_list(self):
         products = []
 
-        for x in db.products.find({}, {"_id": 1, "title": 1, "price": 1, "images": {"$slice": 1}}):
+        for x in db.products.find({}, {"_id": 1, "title": 1, "price": 1, "orderAvailable": 1, "images": {"$slice": 1}}):
             products.append(x)
 
         return {"products": products}

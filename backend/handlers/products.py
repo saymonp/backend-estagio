@@ -72,6 +72,7 @@ def create(event, context, **kwargs):
         "widthPacked": required(body["widthPacked"], float),
         "diameterPacked": required(body["diameterPacked"], float),
         "formatPacked": required(body["formatPacked"], int),
+        "lengthPacked": required(body["diameterPacked"], float)
     }
 
     product = Product()
