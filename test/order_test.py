@@ -77,13 +77,15 @@ def test_order_show():
         "productId": "608ce08a32a9c32438f4a7f4",
         "quoteOrder": False,
         "allowContact": True,
+        "state": "RS",
+        "location": "Ijuí",
     }
 
     order = Order()
 
-    #response = order.create(order_data)
+    response = order.create(order_data)
 
-    response = order.show("6095a15f29899625237b93b0")
+    response = order.show(response["order_created"])
     print(response)
     test = "order" in response
 

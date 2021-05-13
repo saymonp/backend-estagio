@@ -121,6 +121,8 @@ class Order(object):
                     "images": 1,
                     "notes": 1,
                     "createdAt": 1,
+                    "location": 1,
+                    "state": 1,
                     "productData": {
                         "title": 1,
                         "price": 1,
