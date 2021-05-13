@@ -1,6 +1,6 @@
 from ..product.product import Product
 
-from ..util import lambda_method, lambda_method_custom, auth, required, optional
+from ..util import lambda_method, lambda_method_custom, auth, required, optional, notNone
 from ..errors import AppError
 from ..env import DELETEPRODUCT, UPDATEPRODUCT, CREATEPRODUCT
 
@@ -31,18 +31,18 @@ def update(event, context, **kwargs):
     product_data = {
         "productId": required(body["productId"], str),
         "title": required(body["title"], str),
-        "price": required(body["price"], float),
-        "width": required(body["width"], float),
-        "height": required(body["height"], float),
+        "price": notNone(body["price"]),
+        "width": notNone(body["width"]),
+        "height": notNone(body["height"]),
         "orderAvailable": required(body["orderAvailable"], bool),
         "description": required(body["description"], str),
         "images": required(body["images"], list),
         "files": optional(body["files"], list),
-        "heightPacked": required(body["heightPacked"], float),
-        "weightPacked": required(body["weightPacked"], str),
-        "widthPacked": required(body["widthPacked"], float),
-        "diameterPacked": required(body["diameterPacked"], float),
-        "formatPacked": required(body["formatPacked"], int),
+        "heightPacked": notNone(body["heightPacked"]),
+        "weightPacked": notNone(body["weightPacked"]),
+        "widthPacked": notNone(body["widthPacked"]),
+        "diameterPacked": notNone(body["diameterPacked"]),
+        "formatPacked": notNone(body["formatPacked"]),
     }
 
     product = Product()
@@ -60,19 +60,19 @@ def create(event, context, **kwargs):
 
     product_data = {
         "title": required(body["title"], str),
-        "price": required(body["price"], float),
-        "width": required(body["width"], float),
-        "height": required(body["height"], float),
+        "price": notNone(body["price"]),
+        "width": notNone(body["width"]),
+        "height": notNone(body["height"]),
         "orderAvailable": required(body["orderAvailable"], bool),
         "description": required(body["description"], str),
         "images": required(body["images"], list),
         "files": optional(body["files"], list),
-        "heightPacked": required(body["heightPacked"], float),
-        "weightPacked": required(body["weightPacked"], str),
-        "widthPacked": required(body["widthPacked"], float),
-        "diameterPacked": required(body["diameterPacked"], float),
-        "formatPacked": required(body["formatPacked"], int),
-        "lengthPacked": required(body["diameterPacked"], float)
+        "heightPacked": notNone(body["heightPacked"]),
+        "weightPacked": notNone(body["weightPacked"]),
+        "widthPacked": notNone(body["widthPacked"]),
+        "diameterPacked": notNone(body["diameterPacked"]),
+        "formatPacked": notNone(body["formatPacked"]),
+        "lengthPacked": notNone(body["diameterPacked"])
     }
 
     product = Product()

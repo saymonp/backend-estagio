@@ -17,6 +17,14 @@ def required(param, instance):
         raise AppError("Invalid data").set_code(400)
 
 
+def notNone(param):
+    if param:
+
+        return param
+    else:
+        raise AppError("Invalid data").set_code(400)
+
+
 def optional(param, instance):
     if isinstance(param, instance):
 
