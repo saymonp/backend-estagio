@@ -43,6 +43,7 @@ def update(event, context, **kwargs):
         "widthPacked": notNone(body["widthPacked"]),
         "diameterPacked": notNone(body["diameterPacked"]),
         "formatPacked": notNone(body["formatPacked"]),
+        "lengthPacked": notNone(body["diameterPacked"])
     }
 
     product = Product()
