@@ -67,7 +67,7 @@ class Product(object):
                     s3.delete(f["key"])
 
             if product["images"]:
-                for img in product["images"]:
+                for img in product["images"][1:]:
                     s3.delete(img["key"])
 
         db.products.delete_one({"_id": ObjectId(id)})
