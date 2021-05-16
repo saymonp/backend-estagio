@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil import tz
 import jwt
 from bson import ObjectId
 from typing import List
@@ -28,7 +29,7 @@ class Order(object):
                 "notes": order["notes"],
                 "quoteOrder": order["quoteOrder"],
                 "allowContact": order["allowContact"],
-                "createdAt": datetime.utcnow()
+                "createdAt": datetime.utcnow().astimezone(tz.gettz('America/Sao_Paulo'))
             })
 
             return {"order_created": inserted_order.inserted_id}
@@ -50,7 +51,7 @@ class Order(object):
                 "allowContact": order["allowContact"],
                 "location": order["location"],
                 "state": order["state"],
-                "createdAt": datetime.utcnow()
+                "createdAt": datetime.utcnow().astimezone(tz.gettz('America/Sao_Paulo'))
             })
 
             return {"order_created": inserted_order.inserted_id}

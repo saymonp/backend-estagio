@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil import tz
 from bson import ObjectId
 
 from ..services.mongo import db
@@ -29,7 +30,7 @@ class Product(object):
             "diameterPacked": product["diameterPacked"],
             "formatPacked": product["formatPacked"],
             "lengthPacked": product["lengthPacked"],
-            "createdAt": datetime.utcnow()
+            "createdAt": datetime.utcnow().astimezone(tz.gettz('America/Sao_Paulo'))
         })
 
         return {"product_created": inserted_product.inserted_id}
@@ -51,7 +52,7 @@ class Product(object):
             "diameterPacked": product["diameterPacked"],
             "formatPacked": product["formatPacked"],
             "lengthPacked": product["lengthPacked"],
-            "createdAt": datetime.utcnow()}})
+            "createdAt": datetime.utcnow().astimezone(tz.gettz('America/Sao_Paulo'))}})
 
         return {"msg": "product_updated"}
 
