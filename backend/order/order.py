@@ -67,13 +67,13 @@ class Order(object):
         files = db.orders.find_one({"_id": ObjectId(id), "quoteOrder": True}, {
                                    "files": 1, "images": 1})
 
-        if files and files["files"]:
+        if files and "files" in files:
             s3 = S3(s3config.buckets.upload_bucket,
                     s3config.REGION_NAME, s3config.limits_file_size)
             for f in files["images"]:
                 s3.delete(f.key)
 
-        if files and files["images"]:
+        if files and "images" in files:
             s3 = S3(s3config.buckets.upload_bucket,
                     s3config.REGION_NAME, s3config.limits_file_size)
             for img in files["images"]:
