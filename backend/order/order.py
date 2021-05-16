@@ -6,6 +6,7 @@ from typing import List
 
 from ..services.mongo import db
 from ..services.s3 import S3
+from ..config.s3config import s3config
 
 from backend.errors import AppError
 
