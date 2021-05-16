@@ -67,12 +67,14 @@ class Order(object):
                                    "files": 1, "images": 1})
 
         if files and files["files"]:
-            s3 = S3()
+            s3 = S3(s3config.buckets.upload_bucket,
+                    s3config.REGION_NAME, s3config.limits_file_size)
             for f in files["images"]:
                 s3.delete(f.key)
 
         if files and files["images"]:
-            s3 = S3()
+            s3 = S3(s3config.buckets.upload_bucket,
+                    s3config.REGION_NAME, s3config.limits_file_size)
             for img in files["images"]:
                 s3.delete(img.key)
 
