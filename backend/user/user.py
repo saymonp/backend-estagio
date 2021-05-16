@@ -64,7 +64,7 @@ class User(object):
                 to = check_user["email"]
                 reply_to = "No reply"
                 subject = "Email de Verificação"
-                message = f"Novo link de confirmação http://localhost:4200/user/validation/{token}"
+                message = f"Novo link de confirmação https://imobpoc.online/user/validation/{token}"
 
                 email_service.send_email(to, reply_to, subject, message)
 
@@ -93,7 +93,7 @@ class User(object):
         to = email
         reply_to = "No reply"
         subject = "Email de Verificação"
-        message = f"Link de confirmação http://localhost:4200/user/validation/{token}"
+        message = f"Link de confirmação https://imobpoc.online/user/validation/{token}"
 
         email_service.send_email(to, reply_to, subject, message)
 
@@ -125,7 +125,7 @@ class User(object):
         to = email
         reply_to = "No reply"
         subject = "Redefinição de senha"
-        message = f"Redefinir a sua senha http://localhost:4200/password/reset/{token}"
+        message = f"Redefinir a sua senha https://imobpoc.online/password/reset/{token}"
 
         email_service = Mail()
         email_service.send_email(to, reply_to, subject, message)
