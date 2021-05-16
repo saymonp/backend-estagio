@@ -71,13 +71,13 @@ class Order(object):
             s3 = S3(s3config.buckets.upload_bucket,
                     s3config.REGION_NAME, s3config.limits_file_size)
             for f in files["images"]:
-                s3.delete(f.key)
+                s3.delete(f["key"])
 
         if files and "images" in files:
             s3 = S3(s3config.buckets.upload_bucket,
                     s3config.REGION_NAME, s3config.limits_file_size)
             for img in files["images"]:
-                s3.delete(img.key)
+                s3.delete(img["key"])
 
         db.orders.delete_one({"_id": ObjectId(id)})
 
