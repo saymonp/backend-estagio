@@ -67,7 +67,7 @@ class S3(object):
             {"acl": "public-read"}
         ]
         
-        expiration = 60
+        expiration = 15
         object_name = f"{path}{uuid.uuid4()}{file_name}"
 
         response = s3_client.generate_presigned_post(

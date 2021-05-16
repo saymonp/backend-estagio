@@ -20,11 +20,11 @@ def test_upload_file():
 def test_create_presigned_url():
     s3 = S3(s3config.buckets.upload_bucket, s3config.REGION_NAME, s3config.limits_file_size)
         
-    response = s3.create_presigned_url("testeUrl/", "test.jpg")
+    response = s3.create_presigned_url("testeUrl/", "My Test(34).jpg")
 
     print(response)
-    object_name = "c:/Users/saymo/Desktop/pastas/backend-estagio/backend-estagio/test/fixtures/test.jpg"
+    object_name = "/home/trevisan/Desktop/backend-estagio/test/fixtures/My Test(34).jpg"
     with open(object_name, "rb") as f:
         files = {"file": (response["fields"]["key"], f)}
         http_response = requests.post(response['url'], data=response["fields"], files=files)
-        print(http_response.text)
+        print("response",http_response)

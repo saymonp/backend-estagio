@@ -51,6 +51,7 @@ def upload_presigned_url(event, context, **kwargs):
     file_name = required(pp["fileName"], str)
 
     path = unquote(path)
+    file_name = unquote(file_name)
 
     s3 = S3(s3config.buckets.upload_bucket,
             s3config.REGION_NAME, s3config.limits_file_size)

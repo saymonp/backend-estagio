@@ -3,13 +3,15 @@ import pytest
 import random
 import string
 import json
+import requests
 
 from backend.handlers.contact_email import send_contact_email
 from backend.handlers.users import login, delete, register, request_password_reset, password_reset, email_confirmation, list_users, update_permissions
 
+from backend.handlers.s3 import upload_presigned_url
+
 from backend.user.user import User
 from backend.services.mongo import db
-
 
 def test_contact_email():
     event = {"body": "{\"clientFirstName\": \"Client Name\", \"clientLastName\": \"Client Last Name\", \"clientEmail\": \"example@teste.com\", \"subject\": \"Teste Handler Serverless\", \"message\": \"Teste Serverless...\"}"}
@@ -205,6 +207,16 @@ def test_user_email_confirmation():
     print(response)
     assert json.loads(response["body"]) == {"msg": "User verified"}
 
+def test_presigned_url():
+    event = {"pathParameters": {"path": "teste%2F", "fileName": "My Test(34).jpg"}}
+    response = upload_presigned_url(event, None)
+    response = response["body"]
+    print(response)
+    object_name = "/home/trevisan/Desktop/backend-estagio/test/fixtures/My Test(34).jpg"
+    with open(object_name, "rb") as f:
+        files = {"file": (response["fields"]["key"], f)}
+        http_response = requests.post(response['url'], data=response["fields"], files=files)
+        print("response",http_response)
 
 def randstr(length):
     return ''.join(random.choice(string.ascii_lowercase) for i in range(length))

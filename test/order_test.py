@@ -45,12 +45,12 @@ def test_order_delete():
 
     order = Order()
 
-    order_created = order.create(order_data)
+    # order_created = order.create(order_data)
 
-    id = order_created["order_created"]
+    # id = order_created["order_created"]
 
-    response = order.delete(str(id))
-
+    response = order.delete("60a08f1a6f9ab097cf3166d2")
+    print(response)
     assert response == {"msg": "Order deleted"}
 
 
