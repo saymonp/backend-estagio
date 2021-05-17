@@ -40,7 +40,7 @@ class User(object):
 
         token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
         print(token)
-        return {"name": user["name"], "email": user["email"], "permissions": user["permissions"], "token": token}
+        return {"name": user["name"], "email": user["email"], "permissions": user["permissions"], "verified": user["isVerified"], "token": token}
 
     def register(self, name: str, email: str, password: str, permissions: List[str] = None):
         if not name or not email or not password:
