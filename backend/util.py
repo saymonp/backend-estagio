@@ -154,6 +154,10 @@ def auth(f: Callable, permission: str):
             payload = jwt.decode(auth_token, JWT_SECRET, algorithms="HS256")
 
             permissions = payload["permissions"]
+            verified = payload["verified"]
+
+            if verified == False:
+                raise AppError('Unauthorized: Unverified user')
 
             if permission:
                 if permission not in permissions:

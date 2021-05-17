@@ -33,6 +33,7 @@ class User(object):
             "sub": user["email"],
             "exp": datetime.now() + timedelta(hours=12),
             "id": str(user["_id"]),
+            "verified": user["isVerified"]
             "name": user["name"],
             "permissions": user["permissions"]
         }
