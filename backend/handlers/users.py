@@ -51,7 +51,7 @@ def register(event, context, **kwargs):
     u = User()
     response = u.register(name, email, password, permissions=permissions)
 
-    return {"msg": response["msg"], "_id": str(response["_id"]) if "_id" in response else None}
+    return response["msg"]
 
 
 @lambda_method

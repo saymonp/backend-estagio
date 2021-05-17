@@ -56,7 +56,7 @@ class User(object):
                 return {"msg": "User already exists"}
             else:
                 if not bcrypt.checkpw(password.encode(), check_user["password"]):
-                    raise AppError("Autentication failed")
+                    raise AppError("User already registered and not validated")
 
                 token = secrets.token_hex(16)
                 db.secretToken.update({"_userId": check_user["_id"]}, {
@@ -98,7 +98,7 @@ class User(object):
 
         email_service.send_email(to, reply_to, subject, message)
 
-        return {"msg": "Verification email sent", "_id": inserted_user.inserted_id}
+        return {"msg": "Verification email sent"}
 
     def email_confirmation(self, confirmation_token: str):
         secret_token = db.secretToken.find_one({"token": confirmation_token})
