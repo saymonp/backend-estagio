@@ -8,6 +8,7 @@ autopep8 = "*"
 mypy = "*"
 pylint = "*"
 pytest = "*"
+requests = "*"
 
 [packages]
 pymongo = "*"

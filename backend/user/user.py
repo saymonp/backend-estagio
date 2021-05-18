@@ -33,13 +33,14 @@ class User(object):
             "sub": user["email"],
             "exp": datetime.now() + timedelta(hours=12),
             "id": str(user["_id"]),
+            "verified": user["isVerified"],
             "name": user["name"],
             "permissions": user["permissions"]
         }
 
         token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
         print(token)
-        return {"name": user["name"], "email": user["email"], "token": token}
+        return {"name": user["name"], "email": user["email"], "permissions": user["permissions"], "verified": user["isVerified"], "token": token}
 
     def register(self, name: str, email: str, password: str, permissions: List[str] = None):
         if not name or not email or not password:
@@ -55,7 +56,7 @@ class User(object):
                 return {"msg": "User already exists"}
             else:
                 if not bcrypt.checkpw(password.encode(), check_user["password"]):
-                    raise AppError("Autentication failed")
+                    raise AppError("User already registered and not validated")
 
                 token = secrets.token_hex(16)
                 db.secretToken.update({"_userId": check_user["_id"]}, {
@@ -64,7 +65,7 @@ class User(object):
                 to = check_user["email"]
                 reply_to = "No reply"
                 subject = "Email de Verificação"
-                message = f"Novo link de confirmação http://localhost:4200/user/validation/{token}"
+                message = f"Novo link de confirmação https://bemaker.store/user/validation/{token}"
 
                 email_service.send_email(to, reply_to, subject, message)
 
@@ -75,7 +76,7 @@ class User(object):
                 "name": name,
                 "email": email,
                 "password": bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt()),
-                "permissions": permissions,
+                "permissions": permissions if permissions else [],
                 "isVerified": False,
             })
 
@@ -93,11 +94,11 @@ class User(object):
         to = email
         reply_to = "No reply"
         subject = "Email de Verificação"
-        message = f"Link de confirmação http://localhost:4200/user/validation/{token}"
+        message = f"Link de confirmação https://bemaker.store/user/validation/{token}"
 
         email_service.send_email(to, reply_to, subject, message)
 
-        return {"msg": "Verification email sent", "_id": inserted_user.inserted_id}
+        return {"msg": "Verification email sent"}
 
     def email_confirmation(self, confirmation_token: str):
         secret_token = db.secretToken.find_one({"token": confirmation_token})
@@ -125,7 +126,7 @@ class User(object):
         to = email
         reply_to = "No reply"
         subject = "Redefinição de senha"
-        message = f"Redefinir a sua senha http://localhost:4200/password/reset/{token}"
+        message = f"Redefinir a sua senha https://bemaker.store/password/reset/{token}"
 
         email_service = Mail()
         email_service.send_email(to, reply_to, subject, message)

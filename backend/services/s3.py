@@ -4,6 +4,7 @@ from botocore.exceptions import ClientError
 import uuid
 import re
 from base64 import b64decode
+from sys import getsizeof
 
 from ..config.s3config import s3config
 from backend.errors import AppError
@@ -17,38 +18,23 @@ s3_client = boto3.client('s3',
 
 class S3(object):
 
-    allowed_mimes = (
-        "image/jpeg",
-        "image/pjpeg",
-        "image/png",
-        "application/zip",
-        "application/x-rar-compressed",
-        "application/sla",
-        "application/object",
-        "application/x-3ds", 
-        "image/x-3ds",
-        "model/x3d+vrml",
-        "model/x3d+xml",
-        "model/x3d+binary"
-        "application/vnd")
-
     def __init__(self, bucket_name, region, size_limits):
         self.bucket = bucket_name
         self.limits = size_limits
         self.region = region
 
     def upload(self, file, object_name, path=None):
-        match = re.search("data:(\w+/\w+);base64,(.+)", file)
+        match = re.search("data:(.+/.+);base64,(.+)", file)
 
         mime = match.group(1)
         base64 = match.group(2)
 
-        if mime.endswith(self.allowed_mimes) == True:
-            pass
-        else:
-            raise AppError("Invalid data").set_code(404)
-
         filedata = b64decode(base64)
+
+        size = getsizeof(filedata)
+
+        if size > 30000000:
+            raise AppError("Data to large").set_code(404)
 
         key = path + str(uuid.uuid4()) + object_name
 
@@ -72,3 +58,20 @@ class S3(object):
         url = f"https://{self.bucket}.s3.{self.region}.amazonaws.com/{key}"
 
         return {"file_url": url, "key": key}
+
+    def create_presigned_url(self, path, file_name):
+        s3_params = {
+            "acl": "public-read"
+        }
+        s3_cond = [
+            {"acl": "public-read"}
+        ]
+        
+        expiration = 15
+        object_name = f"{path}{uuid.uuid4()}{file_name}"
+
+        response = s3_client.generate_presigned_post(
+            self.bucket, object_name, Fields=s3_params, Conditions=s3_cond, ExpiresIn=expiration)
+        #response = s3_client.generate_presigned_post(self.bucket, object_name, Params=s3_params, ExpiresIn=expiration)
+
+        return response
