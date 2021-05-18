@@ -197,7 +197,7 @@ functions:
           method: get
           cors: true
   listOrders:
-    handler: backend.handlers.orders_list
+    handler: backend.handlers.orders.orders_list
     events:
       - http:
           path: /api/v1/listOrders
